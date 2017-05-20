@@ -1,0 +1,20 @@
+body {
+  display: flex;
+  justify-content: center; }
+
+#app {
+  width: 80%; }
+
+#addRecipe {
+  background-color: #115F8A;
+  padding: 10px;
+  color: white;
+  border-radius: 10px;
+  border-style: none; }
+
+#recipeHolder {
+  background-color: white;
+  width: 80%; }
+
+#recipe {
+  background-color: #DAE6EB; }

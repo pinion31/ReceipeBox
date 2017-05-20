@@ -1,12 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
+import RecipeHolder from './components/RecipeHolder';
 
 ReactDOM.render (
   <div>
   <RecipeHolder> </RecipeHolder>
-
-  <Button> </Button>
   </div>,
   document.getElementById("app")
 );

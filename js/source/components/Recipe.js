@@ -7,13 +7,16 @@ class Recipe extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      recipeName: this.props.name,
 
     };
   }
 
   render() {
     return (
-
+      <div id= "recipe">
+        <h1>{this.state.recipeName}</h1>
+      </div>
     );
   }
 }

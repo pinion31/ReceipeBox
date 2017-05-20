@@ -1,0 +1,16 @@
+body {
+  display: flex;
+  justify-content: center;
+}
+
+#app {
+  width:80%;
+}
+
+#addRecipe {
+  background-color: $button-background-color;
+  padding: 10px;
+  color:$button-text-color;
+  border-radius: 10px;
+  border-style: none;
+}

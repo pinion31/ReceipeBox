@@ -25,7 +25,7 @@ gulp.task('browserify', () => {
     .pipe(gulp.dest(''))
 });
 
-gulp.task('default', ['sass','buildFiles', 'browserify']);
+gulp.task('default', ['sass','buildFiles', 'browserify','sass','buildFiles', 'browserify']);
 
 gulp.task('sass', function () {
   return gulp.src('./sass/style.scss')
