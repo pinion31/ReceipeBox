@@ -1,0 +1,35 @@
+{
+  "name": "recipebox",
+  "version": "1.0.0",
+  "description": "Recipe App",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pinion31/RecipeBox.git"
+  },
+  "keywords": [
+    "RecipeBox",
+    "Recipe"
+  ],
+  "author": "Chris Cantu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pinion31/RecipeBox/issues"
+  },
+  "homepage": "https://github.com/pinion31/RecipeBox#readme",
+  "devDependencies": {
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-browserify": "^0.5.1",
+    "gulp-cli": "^1.3.0",
+    "gulp-sass": "^3.1.0",
+    "gulp-watch": "^4.3.11",
+    "gulp-webserver": "^0.9.1",
+    "jquery": "^3.2.1"
+  }
+}
