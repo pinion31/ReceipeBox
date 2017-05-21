@@ -45,7 +45,7 @@ var Recipe = function (_Component) {
       recipeName: _this.props.name,
       listOfIngredients: [_react2.default.createElement(
         'p',
-        { className: 'ingredient' },
+        { id: 'ingredient', key: 1 },
         'first ingredient'
       )]
 
@@ -59,7 +59,7 @@ var Recipe = function (_Component) {
       var newIngredientList = Array.from(this.state.listOfIngredients);
       newIngredientList.push(_react2.default.createElement(
         'p',
-        { className: 'ingredient' },
+        { id: 'ingredient', key: newIngredientList.length + 1 },
         "replace with name"
       ));
 
@@ -94,15 +94,29 @@ var Recipe = function (_Component) {
             null,
             _react2.default.createElement(
               _reactBootstrap.Well,
-              null,
+              { id: 'ingredient-space' },
               _react2.default.createElement(
                 'h1',
-                null,
+                { id: 'ingredient-heading' },
                 'Ingredients'
               ),
               this.state.listOfIngredients.map(function (ingredient, key) {
                 return ingredient;
-              })
+              }),
+              _react2.default.createElement(
+                'div',
+                null,
+                _react2.default.createElement(
+                  _reactBootstrap.Button,
+                  { id: 'delete' },
+                  'Delete Recipe'
+                ),
+                _react2.default.createElement(
+                  _reactBootstrap.Button,
+                  { id: 'edit' },
+                  'Edit'
+                )
+              )
             )
           )
         )

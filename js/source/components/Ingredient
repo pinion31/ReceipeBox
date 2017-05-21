@@ -1,0 +1,13 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import {Component, PropTypes} from 'react';
+import $ from 'jquery';
+import {Button, Collapse, Well } from 'react-bootstrap';
+
+class Ingredient extends Component {
+
+
+
+}
+
+export default Ingredient

@@ -5,15 +5,16 @@ body {
 #app {
   width: 80%; }
 
+#recipeholder {
+  width: 100%; }
+
 #addRecipe {
   background-color: #115F8A;
   padding: 10px;
   color: white;
   border-radius: 10px;
-  border-style: none; }
-
-#recipeholder {
-  width: 100%; }
+  border-style: none;
+  font-style: bold; }
 
 #recipe {
   background-color: #C3D4DB;
@@ -28,3 +29,30 @@ body {
 #recipe-content {
   margin: 0px;
   padding: 0px; }
+
+#ingredient-space {
+  display: flex;
+  flex-direction: column; }
+
+#ingredient-heading {
+  align-self: center; }
+
+#delete {
+  background-color: #ED1C1C;
+  width: 100px;
+  margin: 5px;
+  color: white;
+  font-weight: bold; }
+
+#edit {
+  background-color: #8FBACC;
+  width: 100px;
+  margin: 5px;
+  color: #144E66;
+  font-weight: bold; }
+
+#ingredient {
+  background-color: #D8E1E6;
+  padding: 5px 20px;
+  border-radius: 10px;
+  font-weight: bold; }

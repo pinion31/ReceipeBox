@@ -12,14 +12,16 @@ class Recipe extends Component {
     super(props);
     this.state = {
       recipeName: this.props.name,
-      listOfIngredients:[<p className="ingredient">first ingredient</p>],
+      listOfIngredients:[<p id="ingredient" key={1}>first ingredient</p>],
 
     }
   }
 
   addIngredient(nameOfIngredient) {
     let newIngredientList = Array.from(this.state.listOfIngredients);
-    newIngredientList.push(<p className="ingredient">{"replace with name"}</p>);
+    newIngredientList.push(<p id="ingredient" key={newIngredientList.length+1}>
+      {"replace with name"}
+    </p>);
 
     this.setState({
       listOfIngredients:newIngredientList,
@@ -35,14 +37,19 @@ class Recipe extends Component {
 
         <Collapse in={this.state.open} id="recipe-content">
           <div>
-              <Well>
-                <h1>Ingredients</h1>
+              <Well id="ingredient-space">
+                <h1 id="ingredient-heading">Ingredients</h1>
                 {this.state.listOfIngredients.map(function(ingredient,key) {
                   return ingredient;
                 })
                 }
+               <div>
+                <Button id="delete">Delete Recipe</Button>
+                <Button id="edit">Edit</Button>
+               </div>
               </Well>
           </div>
+
         </Collapse>
       </div>
     );

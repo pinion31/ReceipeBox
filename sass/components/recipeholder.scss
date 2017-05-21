@@ -1,3 +1,12 @@
 #recipeholder {
   width: 100%;
 }
+
+#addRecipe {
+  background-color: $button-background-color;
+  padding: 10px;
+  color:$button-text-color;
+  border-radius: 10px;
+  border-style: none;
+  font-weight: bold;
+}
