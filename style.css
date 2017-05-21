@@ -12,9 +12,19 @@ body {
   border-radius: 10px;
   border-style: none; }
 
-#recipeHolder {
-  background-color: white;
-  width: 80%; }
+#recipeholder {
+  width: 100%; }
 
 #recipe {
-  background-color: #DAE6EB; }
+  background-color: #C3D4DB;
+  width: 100%;
+  border-style: none;
+  display: flex;
+  margin-bottom: 10px;
+  color: #144E66; }
+  #recipe h1 {
+    margin-left: 10px; }
+
+#recipe-content {
+  margin: 0px;
+  padding: 0px; }

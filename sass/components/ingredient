@@ -1,0 +1,4 @@
+.ingredient {
+  background-color: $ingredient-background-color;
+
+}

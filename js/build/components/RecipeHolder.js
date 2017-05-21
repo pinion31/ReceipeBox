@@ -18,6 +18,8 @@ var _Recipe = require('./Recipe');
 
 var _Recipe2 = _interopRequireDefault(_Recipe);
 
+var _reactBootstrap = require('react-bootstrap');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -44,7 +46,6 @@ var RecipeHolder = function (_Component) {
   _createClass(RecipeHolder, [{
     key: '_addRecipe',
     value: function _addRecipe(e) {
-      console.log("test");
       e.preventDefault();
       var newListOfRecipes = Array.from(this.state.listOfRecipes);
 
@@ -64,10 +65,14 @@ var RecipeHolder = function (_Component) {
     value: function render() {
       return _react2.default.createElement(
         'div',
-        { id: 'recipeholder' },
-        this.state.listOfRecipes.map(function (recipeIndex) {
-          return recipeIndex;
-        }),
+        null,
+        _react2.default.createElement(
+          'div',
+          { id: 'recipeholder' },
+          this.state.listOfRecipes.map(function (recipeIndex) {
+            return recipeIndex;
+          })
+        ),
         _react2.default.createElement(
           'form',
           null,

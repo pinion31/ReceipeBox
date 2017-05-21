@@ -14,6 +14,12 @@ var _reactDom = require('react-dom');
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
+var _jquery = require('jquery');
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _reactBootstrap = require('react-bootstrap');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21,6 +27,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+//import Bootstrap from 'bootstrap';
+
+//import Bootstrap from 'bootstrap';
+
 
 var Recipe = function (_Component) {
   _inherits(Recipe, _Component);
@@ -31,22 +41,69 @@ var Recipe = function (_Component) {
     var _this = _possibleConstructorReturn(this, (Recipe.__proto__ || Object.getPrototypeOf(Recipe)).call(this, props));
 
     _this.state = {
-      recipeName: _this.props.name
+      recipeName: _this.props.name,
+      listOfIngredients: [_react2.default.createElement(
+        'p',
+        { className: 'ingredient' },
+        'first ingredient'
+      )]
 
     };
     return _this;
   }
 
   _createClass(Recipe, [{
+    key: 'addIngredient',
+    value: function addIngredient(nameOfIngredient) {
+      var newIngredientList = Array.from(this.state.listOfIngredients);
+      newIngredientList.push(_react2.default.createElement(
+        'p',
+        { className: 'ingredient' },
+        "replace with name"
+      ));
+
+      this.setState({
+        listOfIngredients: newIngredientList
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
+      var _this2 = this;
+
       return _react2.default.createElement(
         'div',
-        { id: 'recipe' },
+        null,
         _react2.default.createElement(
-          'h1',
-          null,
-          this.state.recipeName
+          _reactBootstrap.Button,
+          { id: 'recipe', onClick: function onClick() {
+              return _this2.setState({ open: !_this2.state.open });
+            } },
+          _react2.default.createElement(
+            'h1',
+            null,
+            this.state.recipeName
+          )
+        ),
+        _react2.default.createElement(
+          _reactBootstrap.Collapse,
+          { 'in': this.state.open, id: 'recipe-content' },
+          _react2.default.createElement(
+            'div',
+            null,
+            _react2.default.createElement(
+              _reactBootstrap.Well,
+              null,
+              _react2.default.createElement(
+                'h1',
+                null,
+                'Ingredients'
+              ),
+              this.state.listOfIngredients.map(function (ingredient, key) {
+                return ingredient;
+              })
+            )
+          )
         )
       );
     }
@@ -54,5 +111,27 @@ var Recipe = function (_Component) {
 
   return Recipe;
 }(_react.Component);
+
+/*
+  render() {
+    return (
+      <div>
+          <button id="recipe" data-toggle="collapse" data-target="#recipe-content">
+            <h1>{this.state.recipeName}</h1>
+          </button>
+
+        <div id="recipe-content" className="collapse">
+            <ul>
+                <li>1</li>
+                <li>2</li>
+                <li>3</li>
+            </ul>
+        </div>
+      </div>
+    );
+  }
+}
+*/
+
 
 exports.default = Recipe;
