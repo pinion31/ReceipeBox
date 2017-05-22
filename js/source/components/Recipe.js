@@ -15,10 +15,12 @@ class Recipe extends Component {
       recipeName: this.props.name,
       listOfIngredients: this.props.ingredList,
       showModal:false,
-
+      newRecipeName:this.props.name,
+      newListOfIngredients:this.props.ingredList,
     }
   }
 
+  /*
   addIngredient(nameOfIngredient) {
     let newIngredientList = Array.from(this.state.listOfIngredients);
     newIngredientList.push(<p id="ingredient" key={newIngredientList.length+1}>
@@ -28,21 +30,53 @@ class Recipe extends Component {
     this.setState({
       listOfIngredients:newIngredientList,
     });
-  }
+  }*/
 
   close() {
     this.setState({
-      showModal:false
+      showModal:false,
+      newRecipeName: this.state.recipeName,
+      newListOfIngredients: this.state.listOfIngredients,
     });
 
   }
 
   open() {
     this.setState({
-      showModal:true
+      showModal:true,
     });
   }
 
+/*
+  resetRecipeInfo() {
+    this.setState({
+     newRecipeName: this.state.recipeName,
+     newListOfIngredients: this.state.listOfIngredients,
+    });
+  }
+  */
+
+  _updateRecipeName(evt) {
+    this.setState({
+      newRecipeName:evt.target.value,
+    });
+  }
+
+  _updateIngredList(evt) {
+    let newIngredList = evt.target.value.split(',');
+
+    this.setState({
+      newListOfIngredients:newIngredList,
+    });
+  }
+
+  _submitNewRecipeInfo() {
+    this.setState({
+      recipeName: this.state.newRecipeName,
+      listOfIngredients: this.state.newListOfIngredients,
+    });
+
+  }
   render() {
     return (
       <div>
@@ -59,12 +93,11 @@ class Recipe extends Component {
                     <p id="ingredient" key={keyId}>
                     {ingredient}
                     </p>);
-
                 })
                 }
                <div>
                 <Button id="delete">Delete Recipe</Button>
-                <Button id="edit" onClick={this.open.bind(this)} >Edit</Button>
+                <Button id="edit" onClick={this.open.bind(this)}>Edit</Button>
                </div>
               </Well>
           </div>
@@ -78,13 +111,14 @@ class Recipe extends Component {
           <Modal.Body>
 
             <p className="modal-text">Recipe</p>
-            <input type="text" placeholder="Recipe Name" id="name-of-recipe" value={this.state.recipeName}/>
+            <input type="text" placeholder="Recipe Name" onChange={this._updateRecipeName.bind(this)} id="name-of-recipe" value={this.state.newRecipeName}/>
             <p className="modal-text">Ingredients</p>
-            <textarea placeholder="Enter ingredients separate by comma" id="ingredient-text" value={this.state.listOfIngredients}></textarea>
+            <textarea placeholder="Enter ingredients separate by comma" onChange={this._updateIngredList.bind(this)} id="ingredient-text" value={this.state.newListOfIngredients}>
+            </textarea>
 
           </Modal.Body>
           <Modal.Footer>
-            <Button id="EditRecipe">Edit Recipe</Button>
+            <Button id="EditRecipe" onClick={this._submitNewRecipeInfo.bind(this)}>Edit Recipe</Button>
             <Button id="CloseRecipeModal" onClick={this.close.bind(this)}>Close</Button>
           </Modal.Footer>
         </Modal>

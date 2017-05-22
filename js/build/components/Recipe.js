@@ -47,31 +47,31 @@ var Recipe = function (_Component) {
     _this.state = {
       recipeName: _this.props.name,
       listOfIngredients: _this.props.ingredList,
-      showModal: false
-
+      showModal: false,
+      newRecipeName: _this.props.name,
+      newListOfIngredients: _this.props.ingredList
     };
     return _this;
   }
 
-  _createClass(Recipe, [{
-    key: 'addIngredient',
-    value: function addIngredient(nameOfIngredient) {
-      var newIngredientList = Array.from(this.state.listOfIngredients);
-      newIngredientList.push(_react2.default.createElement(
-        'p',
-        { id: 'ingredient', key: newIngredientList.length + 1 },
-        "replace with name"
-      ));
-
+  /*
+  addIngredient(nameOfIngredient) {
+    let newIngredientList = Array.from(this.state.listOfIngredients);
+    newIngredientList.push(<p id="ingredient" key={newIngredientList.length+1}>
+      {"replace with name"}
+    </p>);
       this.setState({
-        listOfIngredients: newIngredientList
-      });
-    }
-  }, {
+      listOfIngredients:newIngredientList,
+    });
+  }*/
+
+  _createClass(Recipe, [{
     key: 'close',
     value: function close() {
       this.setState({
-        showModal: false
+        showModal: false,
+        newRecipeName: this.state.recipeName,
+        newListOfIngredients: this.state.listOfIngredients
       });
     }
   }, {
@@ -79,6 +79,40 @@ var Recipe = function (_Component) {
     value: function open() {
       this.setState({
         showModal: true
+      });
+    }
+
+    /*
+      resetRecipeInfo() {
+        this.setState({
+         newRecipeName: this.state.recipeName,
+         newListOfIngredients: this.state.listOfIngredients,
+        });
+      }
+      */
+
+  }, {
+    key: '_updateRecipeName',
+    value: function _updateRecipeName(evt) {
+      this.setState({
+        newRecipeName: evt.target.value
+      });
+    }
+  }, {
+    key: '_updateIngredList',
+    value: function _updateIngredList(evt) {
+      var newIngredList = evt.target.value.split(',');
+
+      this.setState({
+        newListOfIngredients: newIngredList
+      });
+    }
+  }, {
+    key: '_submitNewRecipeInfo',
+    value: function _submitNewRecipeInfo() {
+      this.setState({
+        recipeName: this.state.newRecipeName,
+        listOfIngredients: this.state.newListOfIngredients
       });
     }
   }, {
@@ -158,20 +192,20 @@ var Recipe = function (_Component) {
               { className: 'modal-text' },
               'Recipe'
             ),
-            _react2.default.createElement('input', { type: 'text', placeholder: 'Recipe Name', id: 'name-of-recipe', value: this.state.recipeName }),
+            _react2.default.createElement('input', { type: 'text', placeholder: 'Recipe Name', onChange: this._updateRecipeName.bind(this), id: 'name-of-recipe', value: this.state.newRecipeName }),
             _react2.default.createElement(
               'p',
               { className: 'modal-text' },
               'Ingredients'
             ),
-            _react2.default.createElement('textarea', { placeholder: 'Enter ingredients separate by comma', id: 'ingredient-text', value: this.state.listOfIngredients })
+            _react2.default.createElement('textarea', { placeholder: 'Enter ingredients separate by comma', onChange: this._updateIngredList.bind(this), id: 'ingredient-text', value: this.state.newListOfIngredients })
           ),
           _react2.default.createElement(
             _reactBootstrap.Modal.Footer,
             null,
             _react2.default.createElement(
               _reactBootstrap.Button,
-              { id: 'EditRecipe' },
+              { id: 'EditRecipe', onClick: this._submitNewRecipeInfo.bind(this) },
               'Edit Recipe'
             ),
             _react2.default.createElement(

@@ -62,7 +62,7 @@ class RecipeHolder extends Component {
   _updateRecipeName(evt) {
     this.setState({
       nameOfNewRecipe:evt.target.value,
-    })
+    });
   }
 
   _updateIngredList(evt) {
@@ -70,7 +70,7 @@ class RecipeHolder extends Component {
 
     this.setState({
       newRecipeIngredList:newIngredList,
-    })
+    });
   }
 
   render() {
