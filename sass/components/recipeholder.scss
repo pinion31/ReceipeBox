@@ -2,7 +2,20 @@
   width: 100%;
 }
 
-#addRecipe {
+.addRecipe {
+  background-color: $button-background-color;
+  padding: 10px;
+  color:$button-text-color;
+  border-radius: 10px;
+  border-style: none;
+  font-weight: bold;
+}
+
+#startButton {
+  margin-top: 10px;
+}
+
+Modal.Footer Button {
   background-color: $button-background-color;
   padding: 10px;
   color:$button-text-color;

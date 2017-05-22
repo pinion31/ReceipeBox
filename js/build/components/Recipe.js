@@ -20,6 +20,10 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 var _reactBootstrap = require('react-bootstrap');
 
+var _RecipeModal = require('./RecipeModal');
+
+var _RecipeModal2 = _interopRequireDefault(_RecipeModal);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -42,11 +46,8 @@ var Recipe = function (_Component) {
 
     _this.state = {
       recipeName: _this.props.name,
-      listOfIngredients: [_react2.default.createElement(
-        'p',
-        { id: 'ingredient', key: 1 },
-        'first ingredient'
-      )]
+      listOfIngredients: _this.props.ingredList,
+      showModal: false
 
     };
     return _this;
@@ -64,6 +65,20 @@ var Recipe = function (_Component) {
 
       this.setState({
         listOfIngredients: newIngredientList
+      });
+    }
+  }, {
+    key: 'close',
+    value: function close() {
+      this.setState({
+        showModal: false
+      });
+    }
+  }, {
+    key: 'open',
+    value: function open() {
+      this.setState({
+        showModal: true
       });
     }
   }, {
@@ -99,8 +114,12 @@ var Recipe = function (_Component) {
                 { id: 'ingredient-heading' },
                 'Ingredients'
               ),
-              this.state.listOfIngredients.map(function (ingredient, key) {
-                return ingredient;
+              this.state.listOfIngredients.map(function (ingredient, keyId) {
+                return _react2.default.createElement(
+                  'p',
+                  { id: 'ingredient', key: keyId },
+                  ingredient
+                );
               }),
               _react2.default.createElement(
                 'div',
@@ -112,10 +131,53 @@ var Recipe = function (_Component) {
                 ),
                 _react2.default.createElement(
                   _reactBootstrap.Button,
-                  { id: 'edit' },
+                  { id: 'edit', onClick: this.open.bind(this) },
                   'Edit'
                 )
               )
+            )
+          )
+        ),
+        _react2.default.createElement(
+          _reactBootstrap.Modal,
+          { show: this.state.showModal, onHide: this.close.bind(this) },
+          _react2.default.createElement(
+            _reactBootstrap.Modal.Header,
+            { closeButton: true },
+            _react2.default.createElement(
+              _reactBootstrap.Modal.Title,
+              null,
+              'Edit Recipe'
+            )
+          ),
+          _react2.default.createElement(
+            _reactBootstrap.Modal.Body,
+            null,
+            _react2.default.createElement(
+              'p',
+              { className: 'modal-text' },
+              'Recipe'
+            ),
+            _react2.default.createElement('input', { type: 'text', placeholder: 'Recipe Name', id: 'name-of-recipe', value: this.state.recipeName }),
+            _react2.default.createElement(
+              'p',
+              { className: 'modal-text' },
+              'Ingredients'
+            ),
+            _react2.default.createElement('textarea', { placeholder: 'Enter ingredients separate by comma', id: 'ingredient-text', value: this.state.listOfIngredients })
+          ),
+          _react2.default.createElement(
+            _reactBootstrap.Modal.Footer,
+            null,
+            _react2.default.createElement(
+              _reactBootstrap.Button,
+              { id: 'EditRecipe' },
+              'Edit Recipe'
+            ),
+            _react2.default.createElement(
+              _reactBootstrap.Button,
+              { id: 'CloseRecipeModal', onClick: this.close.bind(this) },
+              'Close'
             )
           )
         )
@@ -145,6 +207,7 @@ var Recipe = function (_Component) {
     );
   }
 }
+
 */
 
 

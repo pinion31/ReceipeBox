@@ -4,7 +4,8 @@ import {Component, PropTypes} from 'react';
 //import Bootstrap from 'bootstrap';
 import $ from 'jquery';
 //import Bootstrap from 'bootstrap';
-import {Button, Collapse, Well } from 'react-bootstrap';
+import {Button, Collapse, Well, Modal, closeButton} from 'react-bootstrap';
+import RecipeModal from './RecipeModal';
 
 class Recipe extends Component {
 
@@ -12,7 +13,8 @@ class Recipe extends Component {
     super(props);
     this.state = {
       recipeName: this.props.name,
-      listOfIngredients:[<p id="ingredient" key={1}>first ingredient</p>],
+      listOfIngredients: this.props.ingredList,
+      showModal:false,
 
     }
   }
@@ -28,6 +30,19 @@ class Recipe extends Component {
     });
   }
 
+  close() {
+    this.setState({
+      showModal:false
+    });
+
+  }
+
+  open() {
+    this.setState({
+      showModal:true
+    });
+  }
+
   render() {
     return (
       <div>
@@ -39,18 +54,41 @@ class Recipe extends Component {
           <div>
               <Well id="ingredient-space">
                 <h1 id="ingredient-heading">Ingredients</h1>
-                {this.state.listOfIngredients.map(function(ingredient,key) {
-                  return ingredient;
+                {this.state.listOfIngredients.map(function(ingredient,keyId) {
+                  return (
+                    <p id="ingredient" key={keyId}>
+                    {ingredient}
+                    </p>);
+
                 })
                 }
                <div>
                 <Button id="delete">Delete Recipe</Button>
-                <Button id="edit">Edit</Button>
+                <Button id="edit" onClick={this.open.bind(this)} >Edit</Button>
                </div>
               </Well>
           </div>
 
         </Collapse>
+
+        <Modal show={this.state.showModal} onHide={this.close.bind(this)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Edit Recipe</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+
+            <p className="modal-text">Recipe</p>
+            <input type="text" placeholder="Recipe Name" id="name-of-recipe" value={this.state.recipeName}/>
+            <p className="modal-text">Ingredients</p>
+            <textarea placeholder="Enter ingredients separate by comma" id="ingredient-text" value={this.state.listOfIngredients}></textarea>
+
+          </Modal.Body>
+          <Modal.Footer>
+            <Button id="EditRecipe">Edit Recipe</Button>
+            <Button id="CloseRecipeModal" onClick={this.close.bind(this)}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+
       </div>
     );
   }
@@ -75,5 +113,6 @@ class Recipe extends Component {
     );
   }
 }
+
 */
 export default Recipe

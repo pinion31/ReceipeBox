@@ -4,7 +4,8 @@
   border-style:none;
   display: flex;
   margin-bottom: 10px;
-  color: $recipe-heading-color;
+  color: $recipe-heading-text-color;
+  margin-top: 10px;
 
   h1 {
     margin-left: 10px;
@@ -26,7 +27,7 @@
 }
 
 #delete {
-  background-color: $delete-button-color;
+  background-color: $delete-button-background-color;
   width:130px;
   margin: 5px;//refactor
   color: $button-text-color;
@@ -34,9 +35,28 @@
 }
 
 #edit {
-  background-color: $edit-button-color;
+  background-color: $edit-button-background-color;
   width:100px;
   margin: 5px;//refactor
-  color: $recipe-heading-color;
+  color: $recipe-heading-text-color;
   font-weight: bold;//refactor
+}
+
+.modal-backdrop {
+    background-color: blue;
+}
+
+.modal-text {
+  color:$recipe-heading-text-color;
+  font-weight: bold;
+}
+
+#name-of-recipe {
+  width:100%;
+}
+
+#ingredient-text {
+  width:100%;
+  height:50px;
+  margin-top: 15px;
 }

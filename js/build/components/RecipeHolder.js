@@ -20,6 +20,10 @@ var _Recipe2 = _interopRequireDefault(_Recipe);
 
 var _reactBootstrap = require('react-bootstrap');
 
+var _RecipeModal = require('./RecipeModal');
+
+var _RecipeModal2 = _interopRequireDefault(_RecipeModal);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -37,27 +41,76 @@ var RecipeHolder = function (_Component) {
     var _this = _possibleConstructorReturn(this, (RecipeHolder.__proto__ || Object.getPrototypeOf(RecipeHolder)).call(this, props));
 
     _this.state = {
-      listOfRecipes: []
-
+      listOfRecipes: [],
+      showModal: false,
+      nameOfNewRecipe: '',
+      newRecipeIngredList: []
     };
     return _this;
   }
 
+  /*
+    _addRecipe(e) {
+      e.preventDefault();
+      let newListOfRecipes = Array.from(this.state.listOfRecipes);
+  
+      newListOfRecipes.push(
+        <Recipe name= {"Pudding"} key={newListOfRecipes.length+1}> </Recipe>
+      );
+  
+      //sets new state after adding recipe
+      this.setState({
+        listOfRecipes: newListOfRecipes,
+      });
+    }
+  */
+
+
   _createClass(RecipeHolder, [{
+    key: 'close',
+    value: function close() {
+      this.setState({
+        showModal: false
+      });
+    }
+  }, {
+    key: 'open',
+    value: function open(e) {
+      e.preventDefault();
+      this.setState({
+        showModal: true
+      });
+    }
+  }, {
     key: '_addRecipe',
     value: function _addRecipe(e) {
       e.preventDefault();
       var newListOfRecipes = Array.from(this.state.listOfRecipes);
-
       newListOfRecipes.push(_react2.default.createElement(
         _Recipe2.default,
-        { name: "test", key: newListOfRecipes.length + 1 },
+        { name: this.state.nameOfNewRecipe, ingredList: this.state.newRecipeIngredList, key: newListOfRecipes.length + 1 },
         ' '
       ));
 
       //sets new state after adding recipe
       this.setState({
         listOfRecipes: newListOfRecipes
+      });
+    }
+  }, {
+    key: '_updateRecipeName',
+    value: function _updateRecipeName(evt) {
+      this.setState({
+        nameOfNewRecipe: evt.target.value
+      });
+    }
+  }, {
+    key: '_updateIngredList',
+    value: function _updateIngredList(evt) {
+      var newIngredList = evt.target.value.split(',');
+
+      this.setState({
+        newRecipeIngredList: newIngredList
       });
     }
   }, {
@@ -78,8 +131,51 @@ var RecipeHolder = function (_Component) {
           null,
           _react2.default.createElement(
             'button',
-            { id: 'addRecipe', type: 'submit', onClick: this._addRecipe.bind(this) },
+            { id: 'startButton', className: 'addRecipe', type: 'submit', onClick: this.open.bind(this) },
             'Add Recipe'
+          )
+        ),
+        _react2.default.createElement(
+          _reactBootstrap.Modal,
+          { show: this.state.showModal, onHide: this.close.bind(this) },
+          _react2.default.createElement(
+            _reactBootstrap.Modal.Header,
+            { closeButton: true },
+            _react2.default.createElement(
+              _reactBootstrap.Modal.Title,
+              null,
+              'Add A Recipe'
+            )
+          ),
+          _react2.default.createElement(
+            _reactBootstrap.Modal.Body,
+            null,
+            _react2.default.createElement(
+              'p',
+              { className: 'modal-text' },
+              'Recipe'
+            ),
+            _react2.default.createElement('input', { type: 'text', placeholder: 'Recipe Name', id: 'name-of-recipe', onChange: this._updateRecipeName.bind(this) }),
+            _react2.default.createElement(
+              'p',
+              { className: 'modal-text' },
+              'Ingredients'
+            ),
+            _react2.default.createElement('textarea', { placeholder: 'Enter ingredients separate by comma', id: 'ingredient-text', onChange: this._updateIngredList.bind(this) })
+          ),
+          _react2.default.createElement(
+            _reactBootstrap.Modal.Footer,
+            null,
+            _react2.default.createElement(
+              _reactBootstrap.Button,
+              { className: 'addRecipe', onClick: this._addRecipe.bind(this) },
+              'Add Recipe'
+            ),
+            _react2.default.createElement(
+              _reactBootstrap.Button,
+              { id: 'CloseRecipeModal', onClick: this.close.bind(this) },
+              'Close'
+            )
           )
         )
       );
