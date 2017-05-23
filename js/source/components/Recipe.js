@@ -22,18 +22,6 @@ class Recipe extends Component {
     }
   }
 
-  /*
-  addIngredient(nameOfIngredient) {
-    let newIngredientList = Array.from(this.state.listOfIngredients);
-    newIngredientList.push(<p id="ingredient" key={newIngredientList.length+1}>
-      {"replace with name"}
-    </p>);
-
-    this.setState({
-      listOfIngredients:newIngredientList,
-    });
-  }*/
-
   close() {
     this.setState({
       showModal:false,
@@ -49,14 +37,6 @@ class Recipe extends Component {
     });
   }
 
-/*
-  resetRecipeInfo() {
-    this.setState({
-     newRecipeName: this.state.recipeName,
-     newListOfIngredients: this.state.listOfIngredients,
-    });
-  }
-  */
 
   _updateRecipeName(evt) {
     this.setState({
@@ -69,13 +49,23 @@ class Recipe extends Component {
 
     this.setState({
       newListOfIngredients:newIngredList,
+
     });
   }
 
   _submitNewRecipeInfo() {
+
+     //remove empty ingredients
+    var newIngredList = this.state.newListOfIngredients.filter(function(value){
+      if (value.length > 0) {
+        return value;
+    }
+    });
+
     this.setState({
       recipeName: this.state.newRecipeName,
-      listOfIngredients: this.state.newListOfIngredients,
+      listOfIngredients: newIngredList,
+      showModal:false,
     });
 
   }

@@ -105,16 +105,35 @@ var Recipe = function (_Component) {
     value: function _updateIngredList(evt) {
       var newIngredList = evt.target.value.split(',');
 
+      /*
+      newIngredList = newIngredList.filter(function(value) {
+        if (value.length > 0) {
+            return value;
+        }
+      });
+      console.log("value = " + newIngredList);
+      console.log("length = " + newIngredList.length);*/
+
       this.setState({
         newListOfIngredients: newIngredList
+
       });
     }
   }, {
     key: '_submitNewRecipeInfo',
     value: function _submitNewRecipeInfo() {
+
+      //remove empty ingredients
+      var newIngredList = this.state.newListOfIngredients.filter(function (value) {
+        if (value.length > 0) {
+          return value;
+        }
+      });
+
       this.setState({
         recipeName: this.state.newRecipeName,
-        listOfIngredients: this.state.newListOfIngredients
+        listOfIngredients: newIngredList,
+        showModal: false
       });
     }
   }, {
@@ -212,12 +231,12 @@ var Recipe = function (_Component) {
             null,
             _react2.default.createElement(
               _reactBootstrap.Button,
-              { id: 'EditRecipe', onClick: this._submitNewRecipeInfo.bind(this) },
+              { id: 'EditRecipe', className: 'btn btn-primary', onClick: this._submitNewRecipeInfo.bind(this) },
               'Edit Recipe'
             ),
             _react2.default.createElement(
               _reactBootstrap.Button,
-              { id: 'CloseRecipeModal', onClick: this.close.bind(this) },
+              { id: 'CloseRecipeModal', className: 'btn btn-primary', onClick: this.close.bind(this) },
               'Close'
             )
           )

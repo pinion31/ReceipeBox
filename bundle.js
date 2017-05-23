@@ -106,16 +106,35 @@ var Recipe = function (_Component) {
     value: function _updateIngredList(evt) {
       var newIngredList = evt.target.value.split(',');
 
+      /*
+      newIngredList = newIngredList.filter(function(value) {
+        if (value.length > 0) {
+            return value;
+        }
+      });
+      console.log("value = " + newIngredList);
+      console.log("length = " + newIngredList.length);*/
+
       this.setState({
         newListOfIngredients: newIngredList
+
       });
     }
   }, {
     key: '_submitNewRecipeInfo',
     value: function _submitNewRecipeInfo() {
+
+      //remove empty ingredients
+      var newIngredList = this.state.newListOfIngredients.filter(function (value) {
+        if (value.length > 0) {
+          return value;
+        }
+      });
+
       this.setState({
         recipeName: this.state.newRecipeName,
-        listOfIngredients: this.state.newListOfIngredients
+        listOfIngredients: newIngredList,
+        showModal: false
       });
     }
   }, {
@@ -213,12 +232,12 @@ var Recipe = function (_Component) {
             null,
             _react2.default.createElement(
               _reactBootstrap.Button,
-              { id: 'EditRecipe', onClick: this._submitNewRecipeInfo.bind(this) },
+              { id: 'EditRecipe', className: 'btn btn-primary', onClick: this._submitNewRecipeInfo.bind(this) },
               'Edit Recipe'
             ),
             _react2.default.createElement(
               _reactBootstrap.Button,
-              { id: 'CloseRecipeModal', onClick: this.close.bind(this) },
+              { id: 'CloseRecipeModal', className: 'btn btn-primary', onClick: this.close.bind(this) },
               'Close'
             )
           )
@@ -297,8 +316,18 @@ var RecipeHolder = function (_Component) {
 
     var _this = _possibleConstructorReturn(this, (RecipeHolder.__proto__ || Object.getPrototypeOf(RecipeHolder)).call(this, props));
 
+    var data = JSON.parse(localStorage.getItem('data'));
+
+    console.log("data is" + data);
+
+    if (!data) {
+      data = [];
+    } else {
+      data = _this._parseStoredRecipes(data, _this._removeRecipe.bind(_this));
+    }
+
     _this.state = {
-      listOfRecipes: [],
+      listOfRecipes: data,
       showModal: false,
       nameOfNewRecipe: '',
       newRecipeIngredList: []
@@ -339,6 +368,20 @@ var RecipeHolder = function (_Component) {
       });
     }
   }, {
+    key: '_parseStoredRecipes',
+    value: function _parseStoredRecipes(storedRecipes, deleteFunction) {
+      //data is[{"key":"1","ref":null,"props":{"name":"111111","indexOfThisRecipe":-1,"ingredList":["sdfsdf","","dfdfdfd"]},"_owner":null,"_store":{}}]
+      var recipes = [];
+
+      storedRecipes.map(function (recipe, key) {
+        recipes.push(_react2.default.createElement(_Recipe2.default, { name: recipe.props["name"], removeThisReceiptCallback: deleteFunction,
+          indexOfThisRecipe: key, ingredList: recipe.props["ingredList"],
+          key: recipes.length + 1 }));
+      });
+
+      return recipes;
+    }
+  }, {
     key: '_addRecipe',
     value: function _addRecipe(e) {
       e.preventDefault();
@@ -351,6 +394,8 @@ var RecipeHolder = function (_Component) {
       this.setState({
         listOfRecipes: newListOfRecipes,
         showModal: false });
+
+      localStorage.setItem('data', JSON.stringify(newListOfRecipes));
     }
 
     //deletes recipe with client action
@@ -364,6 +409,8 @@ var RecipeHolder = function (_Component) {
       this.setState({
         listOfRecipes: arrToModify
       });
+
+      localStorage.setItem('data', JSON.stringify(arrToModify));
     }
 
     //creates new recipe with client action
@@ -447,7 +494,7 @@ var RecipeHolder = function (_Component) {
             ),
             _react2.default.createElement(
               _reactBootstrap.Button,
-              { id: 'CloseRecipeModal', onClick: this.close.bind(this) },
+              { id: 'CloseRecipeModal', className: 'btn btn-primary', onClick: this.close.bind(this) },
               'Close'
             )
           )
