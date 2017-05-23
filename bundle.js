@@ -50,7 +50,9 @@ var Recipe = function (_Component) {
       listOfIngredients: _this.props.ingredList,
       showModal: false,
       newRecipeName: _this.props.name,
-      newListOfIngredients: _this.props.ingredList
+      newListOfIngredients: _this.props.ingredList,
+      deleteThisRecipe: _this.props.removeThisReceiptCallback,
+      indexOfThisRecipe: _this.props.indexOfThisRecipe
     };
     return _this;
   }
@@ -117,6 +119,11 @@ var Recipe = function (_Component) {
       });
     }
   }, {
+    key: '_deleteThisRecipe',
+    value: function _deleteThisRecipe() {
+      this.state.deleteThisRecipe(this.state.indexOfThisRecipe);
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this2 = this;
@@ -161,7 +168,7 @@ var Recipe = function (_Component) {
                 null,
                 _react2.default.createElement(
                   _reactBootstrap.Button,
-                  { id: 'delete' },
+                  { id: 'delete', onClick: this._deleteThisRecipe.bind(this) },
                   'Delete Recipe'
                 ),
                 _react2.default.createElement(
@@ -336,17 +343,31 @@ var RecipeHolder = function (_Component) {
     value: function _addRecipe(e) {
       e.preventDefault();
       var newListOfRecipes = Array.from(this.state.listOfRecipes);
-      newListOfRecipes.push(_react2.default.createElement(
-        _Recipe2.default,
-        { name: this.state.nameOfNewRecipe, ingredList: this.state.newRecipeIngredList, key: newListOfRecipes.length + 1 },
-        ' '
-      ));
+      newListOfRecipes.push(_react2.default.createElement(_Recipe2.default, { name: this.state.nameOfNewRecipe, removeThisReceiptCallback: this._removeRecipe.bind(this),
+        indexOfThisRecipe: newListOfRecipes.length - 1, ingredList: this.state.newRecipeIngredList,
+        key: newListOfRecipes.length + 1 }));
 
       //sets new state after adding recipe
       this.setState({
-        listOfRecipes: newListOfRecipes
+        listOfRecipes: newListOfRecipes,
+        showModal: false });
+    }
+
+    //deletes recipe with client action
+
+  }, {
+    key: '_removeRecipe',
+    value: function _removeRecipe(indexOfRecipeToRemove) {
+      var arrToModify = Array.from(this.state.listOfRecipes);
+      arrToModify.splice(indexOfRecipeToRemove, 1);
+
+      this.setState({
+        listOfRecipes: arrToModify
       });
     }
+
+    //creates new recipe with client action
+
   }, {
     key: '_updateRecipeName',
     value: function _updateRecipeName(evt) {
@@ -354,6 +375,9 @@ var RecipeHolder = function (_Component) {
         nameOfNewRecipe: evt.target.value
       });
     }
+
+    //add initial ingredients to new recipe
+
   }, {
     key: '_updateIngredList',
     value: function _updateIngredList(evt) {
@@ -411,14 +435,14 @@ var RecipeHolder = function (_Component) {
               { className: 'modal-text' },
               'Ingredients'
             ),
-            _react2.default.createElement('textarea', { placeholder: 'Enter ingredients separate by comma', id: 'ingredient-text', onChange: this._updateIngredList.bind(this) })
+            _react2.default.createElement('textarea', { placeholder: 'Enter ingredients separated by commas', id: 'ingredient-text', onChange: this._updateIngredList.bind(this) })
           ),
           _react2.default.createElement(
             _reactBootstrap.Modal.Footer,
             null,
             _react2.default.createElement(
               _reactBootstrap.Button,
-              { className: 'addRecipe', onClick: this._addRecipe.bind(this) },
+              { id: 'addRecipeButton', className: 'btn btn-primary', onClick: this._addRecipe.bind(this) },
               'Add Recipe'
             ),
             _react2.default.createElement(

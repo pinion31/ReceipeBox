@@ -49,7 +49,9 @@ var Recipe = function (_Component) {
       listOfIngredients: _this.props.ingredList,
       showModal: false,
       newRecipeName: _this.props.name,
-      newListOfIngredients: _this.props.ingredList
+      newListOfIngredients: _this.props.ingredList,
+      deleteThisRecipe: _this.props.removeThisReceiptCallback,
+      indexOfThisRecipe: _this.props.indexOfThisRecipe
     };
     return _this;
   }
@@ -116,6 +118,11 @@ var Recipe = function (_Component) {
       });
     }
   }, {
+    key: '_deleteThisRecipe',
+    value: function _deleteThisRecipe() {
+      this.state.deleteThisRecipe(this.state.indexOfThisRecipe);
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this2 = this;
@@ -160,7 +167,7 @@ var Recipe = function (_Component) {
                 null,
                 _react2.default.createElement(
                   _reactBootstrap.Button,
-                  { id: 'delete' },
+                  { id: 'delete', onClick: this._deleteThisRecipe.bind(this) },
                   'Delete Recipe'
                 ),
                 _react2.default.createElement(

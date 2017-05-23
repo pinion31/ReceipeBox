@@ -50,21 +50,37 @@ class RecipeHolder extends Component {
     e.preventDefault();
     let newListOfRecipes = Array.from(this.state.listOfRecipes);
     newListOfRecipes.push(
-      <Recipe name= {this.state.nameOfNewRecipe} ingredList = {this.state.newRecipeIngredList} key={newListOfRecipes.length+1}> </Recipe>
+      <Recipe name= {this.state.nameOfNewRecipe} removeThisReceiptCallback={this._removeRecipe.bind(this)}
+      indexOfThisRecipe={newListOfRecipes.length-1} ingredList = {this.state.newRecipeIngredList}
+       key={newListOfRecipes.length+1}>
+       </Recipe>
     );
 
     //sets new state after adding recipe
     this.setState({
       listOfRecipes: newListOfRecipes,
+      showModal:false, //closes modal after adding recipe
     });
   }
 
+  //deletes recipe with client action
+  _removeRecipe(indexOfRecipeToRemove){
+    let arrToModify = Array.from(this.state.listOfRecipes);
+    arrToModify.splice(indexOfRecipeToRemove,1);
+
+    this.setState({
+      listOfRecipes: arrToModify,
+    });
+  }
+
+  //creates new recipe with client action
   _updateRecipeName(evt) {
     this.setState({
       nameOfNewRecipe:evt.target.value,
     });
   }
 
+//add initial ingredients to new recipe
   _updateIngredList(evt) {
     let newIngredList = evt.target.value.split(',');
 
@@ -94,12 +110,12 @@ class RecipeHolder extends Component {
             <p className="modal-text">Recipe</p>
             <input type="text" placeholder="Recipe Name" id="name-of-recipe" onChange={this._updateRecipeName.bind(this)}/>
             <p className="modal-text">Ingredients</p>
-            <textarea placeholder="Enter ingredients separate by comma" id="ingredient-text" onChange={this._updateIngredList.bind(this)}>
+            <textarea placeholder="Enter ingredients separated by commas" id="ingredient-text" onChange={this._updateIngredList.bind(this)}>
             </textarea>
           </Modal.Body>
           <Modal.Footer>
-            <Button className="addRecipe" onClick={this._addRecipe.bind(this)}>Add Recipe</Button>
-            <Button id="CloseRecipeModal" onClick={this.close.bind(this)}>Close</Button>
+            <Button id="addRecipeButton" className="btn btn-primary" onClick={this._addRecipe.bind(this)}>Add Recipe</Button>
+            <Button id="CloseRecipeModal" className="btn btn-primary"  onClick={this.close.bind(this)}>Close</Button>
           </Modal.Footer>
         </Modal>
 

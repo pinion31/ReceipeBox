@@ -17,6 +17,8 @@ class Recipe extends Component {
       showModal:false,
       newRecipeName:this.props.name,
       newListOfIngredients:this.props.ingredList,
+      deleteThisRecipe:this.props.removeThisReceiptCallback,
+      indexOfThisRecipe:this.props.indexOfThisRecipe,
     }
   }
 
@@ -77,6 +79,11 @@ class Recipe extends Component {
     });
 
   }
+
+  _deleteThisRecipe() {
+    this.state.deleteThisRecipe(this.state.indexOfThisRecipe);
+  }
+
   render() {
     return (
       <div>
@@ -96,7 +103,7 @@ class Recipe extends Component {
                 })
                 }
                <div>
-                <Button id="delete">Delete Recipe</Button>
+                <Button id="delete" onClick={this._deleteThisRecipe.bind(this)}>Delete Recipe</Button>
                 <Button id="edit" onClick={this.open.bind(this)}>Edit</Button>
                </div>
               </Well>
@@ -118,8 +125,8 @@ class Recipe extends Component {
 
           </Modal.Body>
           <Modal.Footer>
-            <Button id="EditRecipe" onClick={this._submitNewRecipeInfo.bind(this)}>Edit Recipe</Button>
-            <Button id="CloseRecipeModal" onClick={this.close.bind(this)}>Close</Button>
+            <Button id="EditRecipe" className="btn btn-primary" onClick={this._submitNewRecipeInfo.bind(this)}>Edit Recipe</Button>
+            <Button id="CloseRecipeModal" className="btn btn-primary" onClick={this.close.bind(this)}>Close</Button>
           </Modal.Footer>
         </Modal>
 
