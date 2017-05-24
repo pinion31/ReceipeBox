@@ -10,6 +10,10 @@ import RecipeModal from './RecipeModal';
 class Recipe extends Component {
 
   constructor(props) {
+
+
+
+
     super(props);
     this.state = {
       recipeName: this.props.name,
@@ -19,6 +23,7 @@ class Recipe extends Component {
       newListOfIngredients:this.props.ingredList,
       deleteThisRecipe:this.props.removeThisReceiptCallback,
       indexOfThisRecipe:this.props.indexOfThisRecipe,
+      updateThisRecipe:this.props.updateAllRecipes,
     }
   }
 
@@ -51,6 +56,8 @@ class Recipe extends Component {
       newListOfIngredients:newIngredList,
 
     });
+
+    this.state.updateThisRecipe();
   }
 
   _submitNewRecipeInfo() {
@@ -67,6 +74,7 @@ class Recipe extends Component {
       listOfIngredients: newIngredList,
       showModal:false,
     });
+
 
   }
 
@@ -85,12 +93,15 @@ class Recipe extends Component {
           <div>
               <Well id="ingredient-space">
                 <h1 id="ingredient-heading">Ingredients</h1>
-                {this.state.listOfIngredients.map(function(ingredient,keyId) {
+                {
+
+                  this.state.listOfIngredients.map(function(ingredient,keyId) {
                   return (
                     <p id="ingredient" key={keyId}>
                     {ingredient}
                     </p>);
                 })
+
                 }
                <div>
                 <Button id="delete" onClick={this._deleteThisRecipe.bind(this)}>Delete Recipe</Button>

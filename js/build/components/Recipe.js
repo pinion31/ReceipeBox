@@ -51,7 +51,8 @@ var Recipe = function (_Component) {
       newRecipeName: _this.props.name,
       newListOfIngredients: _this.props.ingredList,
       deleteThisRecipe: _this.props.removeThisReceiptCallback,
-      indexOfThisRecipe: _this.props.indexOfThisRecipe
+      indexOfThisRecipe: _this.props.indexOfThisRecipe,
+      updateThisRecipe: _this.props.updateAllRecipes
     };
     return _this;
   }
@@ -88,6 +89,8 @@ var Recipe = function (_Component) {
         newListOfIngredients: newIngredList
 
       });
+
+      this.state.updateThisRecipe();
     }
   }, {
     key: '_submitNewRecipeInfo',

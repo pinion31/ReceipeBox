@@ -4,6 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
@@ -42,12 +44,13 @@ var RecipeHolder = function (_Component) {
 
     var data = JSON.parse(localStorage.getItem('data'));
 
-    console.log("data is" + data);
+    //console.log("data is" + data);
 
     if (!data) {
       data = [];
     } else {
-      data = _this._parseStoredRecipes(data, _this._removeRecipe.bind(_this));
+      //pass _removeRecipe to be passed to RecipeHolder
+      data = _this._parseStoredRecipes(data, _this._removeRecipe.bind(_this), _this.updateAllRecipes.bind(_this));
     }
 
     _this.state = {
@@ -92,15 +95,32 @@ var RecipeHolder = function (_Component) {
       });
     }
   }, {
+    key: 'updateAllRecipes',
+    value: function updateAllRecipes() {
+      var seen = [];
+
+      var replacer = function replacer(key, value) {
+        if (value != null && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) == "object") {
+          if (seen.indexOf(value) >= 0) {
+            return;
+          }
+          seen.push(value);
+        }
+        return value;
+      };
+
+      localStorage.setItem('data', JSON.stringify(this.state.newListOfRecipes, replacer));
+    }
+  }, {
     key: '_parseStoredRecipes',
-    value: function _parseStoredRecipes(storedRecipes, deleteFunction) {
+    value: function _parseStoredRecipes(storedRecipes, deleteFunction, updateFunction) {
       //data is[{"key":"1","ref":null,"props":{"name":"111111","indexOfThisRecipe":-1,"ingredList":["sdfsdf","","dfdfdfd"]},"_owner":null,"_store":{}}]
       var recipes = [];
 
       storedRecipes.map(function (recipe, key) {
         recipes.push(_react2.default.createElement(_Recipe2.default, { name: recipe.props["name"], removeThisReceiptCallback: deleteFunction,
           indexOfThisRecipe: key, ingredList: recipe.props["ingredList"],
-          key: recipes.length + 1 }));
+          key: recipes.length + 1, updateAllRecipes: updateFunction }));
       });
 
       return recipes;
@@ -112,14 +132,26 @@ var RecipeHolder = function (_Component) {
       var newListOfRecipes = Array.from(this.state.listOfRecipes);
       newListOfRecipes.push(_react2.default.createElement(_Recipe2.default, { name: this.state.nameOfNewRecipe, removeThisReceiptCallback: this._removeRecipe.bind(this),
         indexOfThisRecipe: newListOfRecipes.length - 1, ingredList: this.state.newRecipeIngredList,
-        key: newListOfRecipes.length + 1 }));
+        updateAllRecipes: this.updateAllRecipes.bind(this), key: newListOfRecipes.length + 1 }));
 
       //sets new state after adding recipe
       this.setState({
         listOfRecipes: newListOfRecipes,
         showModal: false });
 
-      localStorage.setItem('data', JSON.stringify(newListOfRecipes));
+      var seen = [];
+
+      var replacer = function replacer(key, value) {
+        if (value != null && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) == "object") {
+          if (seen.indexOf(value) >= 0) {
+            return;
+          }
+          seen.push(value);
+        }
+        return value;
+      };
+
+      localStorage.setItem('data', JSON.stringify(newListOfRecipes, replacer));
     }
 
     //deletes recipe with client action
@@ -134,7 +166,19 @@ var RecipeHolder = function (_Component) {
         listOfRecipes: arrToModify
       });
 
-      localStorage.setItem('data', JSON.stringify(arrToModify));
+      var seen = [];
+
+      var replacer = function replacer(key, value) {
+        if (value != null && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) == "object") {
+          if (seen.indexOf(value) >= 0) {
+            return;
+          }
+          seen.push(value);
+        }
+        return value;
+      };
+
+      localStorage.setItem('data', JSON.stringify(arrToModify, replacer));
     }
 
     //creates new recipe with client action

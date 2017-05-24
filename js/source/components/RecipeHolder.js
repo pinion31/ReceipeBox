@@ -12,13 +12,14 @@ class RecipeHolder extends Component {
 
     let data = JSON.parse(localStorage.getItem('data'));
 
-    console.log("data is" + data);
+    //console.log("data is" + data);
 
     if (!data) {
       data = [];
     }
     else {
-      data = this._parseStoredRecipes(data, this._removeRecipe.bind(this));
+      //pass _removeRecipe to be passed to RecipeHolder
+      data = this._parseStoredRecipes(data, this._removeRecipe.bind(this), this.updateAllRecipes.bind(this));
     }
 
 
@@ -29,6 +30,7 @@ class RecipeHolder extends Component {
       newRecipeIngredList:[],
     };
   }
+
 
 /*
   _addRecipe(e) {
@@ -59,7 +61,25 @@ class RecipeHolder extends Component {
     });
   }
 
-  _parseStoredRecipes(storedRecipes, deleteFunction){
+  updateAllRecipes() {
+    var seen = [];
+
+    var replacer = function(key, value) {
+      if (value != null && typeof value == "object") {
+        if (seen.indexOf(value) >= 0) {
+          return;
+        }
+        seen.push(value);
+      }
+      return value;
+    };
+
+
+    localStorage.setItem('data', JSON.stringify(this.state.newListOfRecipes, replacer));
+
+  }
+
+  _parseStoredRecipes(storedRecipes, deleteFunction, updateFunction){
     //data is[{"key":"1","ref":null,"props":{"name":"111111","indexOfThisRecipe":-1,"ingredList":["sdfsdf","","dfdfdfd"]},"_owner":null,"_store":{}}]
     let recipes = [];
 
@@ -67,7 +87,7 @@ class RecipeHolder extends Component {
       recipes.push(
         <Recipe name= {recipe.props["name"]} removeThisReceiptCallback={deleteFunction}
        indexOfThisRecipe={key} ingredList = {recipe.props["ingredList"]}
-       key={recipes.length+1}>
+       key={recipes.length+1}  updateAllRecipes= {updateFunction}>
       </Recipe>
       );
     })
@@ -81,9 +101,8 @@ class RecipeHolder extends Component {
     newListOfRecipes.push(
       <Recipe name= {this.state.nameOfNewRecipe} removeThisReceiptCallback={this._removeRecipe.bind(this)}
       indexOfThisRecipe={newListOfRecipes.length-1} ingredList = {this.state.newRecipeIngredList}
-       key={newListOfRecipes.length+1}>
+       updateAllRecipes= {this.updateAllRecipes.bind(this)} key={newListOfRecipes.length+1}>
       </Recipe>
-
     );
 
     //sets new state after adding recipe
@@ -92,7 +111,20 @@ class RecipeHolder extends Component {
       showModal:false, //closes modal after adding recipe
     });
 
-    localStorage.setItem('data', JSON.stringify(newListOfRecipes));
+    var seen = [];
+
+    var replacer = function(key, value) {
+      if (value != null && typeof value == "object") {
+        if (seen.indexOf(value) >= 0) {
+          return;
+        }
+        seen.push(value);
+      }
+      return value;
+    };
+
+
+    localStorage.setItem('data', JSON.stringify(newListOfRecipes, replacer));
   }
 
   //deletes recipe with client action
@@ -104,7 +136,19 @@ class RecipeHolder extends Component {
       listOfRecipes: arrToModify,
     });
 
-    localStorage.setItem('data', JSON.stringify(arrToModify));
+    var seen = [];
+
+    var replacer = function(key, value) {
+      if (value != null && typeof value == "object") {
+        if (seen.indexOf(value) >= 0) {
+          return;
+        }
+        seen.push(value);
+      }
+      return value;
+    };
+
+    localStorage.setItem('data', JSON.stringify(arrToModify,replacer));
 
   }
 
@@ -122,6 +166,8 @@ class RecipeHolder extends Component {
     this.setState({
       newRecipeIngredList:newIngredList,
     });
+
+
   }
 
   render() {
