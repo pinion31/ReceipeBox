@@ -57,17 +57,6 @@ var Recipe = function (_Component) {
     return _this;
   }
 
-  /*
-  addIngredient(nameOfIngredient) {
-    let newIngredientList = Array.from(this.state.listOfIngredients);
-    newIngredientList.push(<p id="ingredient" key={newIngredientList.length+1}>
-      {"replace with name"}
-    </p>);
-      this.setState({
-      listOfIngredients:newIngredientList,
-    });
-  }*/
-
   _createClass(Recipe, [{
     key: 'close',
     value: function close() {
@@ -84,16 +73,6 @@ var Recipe = function (_Component) {
         showModal: true
       });
     }
-
-    /*
-      resetRecipeInfo() {
-        this.setState({
-         newRecipeName: this.state.recipeName,
-         newListOfIngredients: this.state.listOfIngredients,
-        });
-      }
-      */
-
   }, {
     key: '_updateRecipeName',
     value: function _updateRecipeName(evt) {
@@ -105,15 +84,6 @@ var Recipe = function (_Component) {
     key: '_updateIngredList',
     value: function _updateIngredList(evt) {
       var newIngredList = evt.target.value.split(',');
-
-      /*
-      newIngredList = newIngredList.filter(function(value) {
-        if (value.length > 0) {
-            return value;
-        }
-      });
-      console.log("value = " + newIngredList);
-      console.log("length = " + newIngredList.length);*/
 
       this.setState({
         newListOfIngredients: newIngredList
