@@ -27,6 +27,7 @@ class RecipeHolder extends Component {
       showModal:false,
       nameOfNewRecipe:'',
       newRecipeIngredList:[],
+      store:this.props.store,
     };
   }
 
