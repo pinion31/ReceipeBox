@@ -4,8 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
@@ -42,42 +40,20 @@ var RecipeHolder = function (_Component) {
 
     var _this = _possibleConstructorReturn(this, (RecipeHolder.__proto__ || Object.getPrototypeOf(RecipeHolder)).call(this, props));
 
-    var data = JSON.parse(localStorage.getItem('data'));
-
-    //console.log("data is" + data);
-
-    if (!data) {
-      data = [];
-    } else {
-      //pass _removeRecipe to be passed to RecipeHolder
-      data = _this._parseStoredRecipes(data, _this._removeRecipe.bind(_this), _this.updateAllRecipes.bind(_this));
-    }
-
     _this.state = {
-      listOfRecipes: data,
+
+      storeData: _this.props.store.getlocalStorageState(), //array
+      recipesComponents: [],
+      dispatch: _this.props.dispatcher,
       showModal: false,
       nameOfNewRecipe: '',
       newRecipeIngredList: []
     };
+
+    _this.state.recipesComponents = _this._fillWithStoredRecipes();
+    console.log(_this.state.storeData);
     return _this;
   }
-
-  /*
-    _addRecipe(e) {
-      e.preventDefault();
-      let newListOfRecipes = Array.from(this.state.listOfRecipes);
-  
-      newListOfRecipes.push(
-        <Recipe name= {"Pudding"} key={newListOfRecipes.length+1}> </Recipe>
-      );
-  
-      //sets new state after adding recipe
-      this.setState({
-        listOfRecipes: newListOfRecipes,
-      });
-    }
-  */
-
 
   _createClass(RecipeHolder, [{
     key: 'close',
@@ -94,82 +70,60 @@ var RecipeHolder = function (_Component) {
         showModal: true
       });
     }
-  }, {
-    key: 'updateAllRecipes',
-    value: function updateAllRecipes() {
-      var seen = [];
 
-      var replacer = function replacer(key, value) {
-        if (value != null && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) == "object") {
-          if (seen.indexOf(value) >= 0) {
-            return;
-          }
-          seen.push(value);
-        }
-        return value;
-      };
+    //storeData:this.props.store.getlocalStorageState(),
+    //listOfRecipes: this._formatData(),
+    //dispatch: this.props.store.dispatchAction,
+    //{recipes: [{name:cookie, ingredients:[milk,eggs]},{},]}
 
-      localStorage.setItem('data', JSON.stringify(this.state.newListOfRecipes, replacer));
-    }
   }, {
-    key: '_parseStoredRecipes',
-    value: function _parseStoredRecipes(storedRecipes, deleteFunction, updateFunction) {
+    key: '_fillWithStoredRecipes',
+    value: function _fillWithStoredRecipes() {
       //data is[{"key":"1","ref":null,"props":{"name":"111111","indexOfThisRecipe":-1,"ingredList":["sdfsdf","","dfdfdfd"]},"_owner":null,"_store":{}}]
       var recipes = [];
 
-      storedRecipes.map(function (recipe, key) {
-        recipes.push(_react2.default.createElement(_Recipe2.default, { name: recipe.props["name"], removeThisReceiptCallback: deleteFunction,
-          indexOfThisRecipe: key, ingredList: recipe.props["ingredList"],
-          key: recipes.length + 1, updateAllRecipes: updateFunction }));
-      });
-
+      console.log("state = " + this.state);
+      console.log("data = " + this.state.storeData);
+      if (this.state.storeData.length > 0) {
+        this.state.storeData.map(function (value, key) {
+          recipes.push(_react2.default.createElement(_Recipe2.default, { name: value.name, dispatcher: this.state.dispatch.bind(this),
+            ingredList: value.ingredients }));
+        });
+      }
       return recipes;
     }
+
+    //
+    //nameOfNewRecipe:'',
+    //newRecipeIngredList:[],
+
   }, {
     key: '_addRecipe',
     value: function _addRecipe(e) {
       e.preventDefault();
-      var newListOfRecipes = Array.from(this.state.listOfRecipes);
-      newListOfRecipes.push(_react2.default.createElement(_Recipe2.default, { name: this.state.nameOfNewRecipe, removeThisReceiptCallback: this._removeRecipe.bind(this),
-        indexOfThisRecipe: newListOfRecipes.length - 1, ingredList: this.state.newRecipeIngredList,
-        updateAllRecipes: this.updateAllRecipes.bind(this), key: newListOfRecipes.length + 1 }));
+      this.state.storeData = this.state.dispatch(this.state.storeData, {
+        type: "ADD_RECIPE",
+        name: this.state.nameOfNewRecipe,
+        ingredients: this.state.newRecipeIngredList
+      });
 
       //sets new state after adding recipe
       this.setState({
-        listOfRecipes: newListOfRecipes,
+        recipesComponents: this._fillWithStoredRecipes(),
         showModal: false });
-
-      var seen = [];
-
-      var replacer = function replacer(key, value) {
-        if (value != null && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) == "object") {
-          if (seen.indexOf(value) >= 0) {
-            return;
-          }
-          seen.push(value);
-        }
-        return value;
-      };
-
-      localStorage.setItem('data', JSON.stringify(newListOfRecipes, replacer));
     }
 
     //deletes recipe with client action
-
-  }, {
-    key: '_removeRecipe',
-    value: function _removeRecipe(indexOfRecipeToRemove) {
-      var arrToModify = Array.from(this.state.listOfRecipes);
-      arrToModify.splice(indexOfRecipeToRemove, 1);
-
-      this.setState({
-        listOfRecipes: arrToModify
+    /*
+    _removeRecipe(indexOfRecipeToRemove){
+      let arrToModify = Array.from(this.state.listOfRecipes);
+      arrToModify.splice(indexOfRecipeToRemove,1);
+        this.setState({
+        listOfRecipes: arrToModify,
       });
-
-      var seen = [];
-
-      var replacer = function replacer(key, value) {
-        if (value != null && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) == "object") {
+        var seen = [];
+        var replacer = function(key, value) {
+        if (value != null && typeof value == "object") {
           if (seen.indexOf(value) >= 0) {
             return;
           }
@@ -177,10 +131,9 @@ var RecipeHolder = function (_Component) {
         }
         return value;
       };
-
-      localStorage.setItem('data', JSON.stringify(arrToModify, replacer));
-    }
-
+        localStorage.setItem('data', JSON.stringify(arrToModify,replacer));
+      }
+    */
     //creates new recipe with client action
 
   }, {
@@ -202,6 +155,10 @@ var RecipeHolder = function (_Component) {
         newRecipeIngredList: newIngredList
       });
     }
+
+    //listOfRecipes:this.props.store.getlocalStorageState(),
+    //dispatch: this.props.store.dispatchAction,
+
   }, {
     key: 'render',
     value: function render() {
@@ -211,7 +168,7 @@ var RecipeHolder = function (_Component) {
         _react2.default.createElement(
           'div',
           { id: 'recipeholder' },
-          this.state.listOfRecipes.map(function (recipeIndex) {
+          this.state.recipesComponents.map(function (recipeIndex) {
             return recipeIndex;
           })
         ),

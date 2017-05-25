@@ -50,9 +50,7 @@ var Recipe = function (_Component) {
       showModal: false,
       newRecipeName: _this.props.name,
       newListOfIngredients: _this.props.ingredList,
-      deleteThisRecipe: _this.props.removeThisReceiptCallback,
-      indexOfThisRecipe: _this.props.indexOfThisRecipe,
-      updateThisRecipe: _this.props.updateAllRecipes
+      dispatch: _this.props.dispatcher
     };
     return _this;
   }
@@ -90,7 +88,7 @@ var Recipe = function (_Component) {
 
       });
 
-      this.state.updateThisRecipe();
+      // this.state.updateThisRecipe();
     }
   }, {
     key: '_submitNewRecipeInfo',
@@ -109,11 +107,12 @@ var Recipe = function (_Component) {
         showModal: false
       });
     }
-  }, {
-    key: '_deleteThisRecipe',
-    value: function _deleteThisRecipe() {
+
+    /*
+    _deleteThisRecipe() {
       this.state.deleteThisRecipe(this.state.indexOfThisRecipe);
-    }
+    }*/
+
   }, {
     key: 'render',
     value: function render() {
@@ -159,7 +158,7 @@ var Recipe = function (_Component) {
                 null,
                 _react2.default.createElement(
                   _reactBootstrap.Button,
-                  { id: 'delete', onClick: this._deleteThisRecipe.bind(this) },
+                  { id: 'delete' },
                   'Delete Recipe'
                 ),
                 _react2.default.createElement(
@@ -220,28 +219,5 @@ var Recipe = function (_Component) {
 
   return Recipe;
 }(_react.Component);
-
-/*
-  render() {
-    return (
-      <div>
-          <button id="recipe" data-toggle="collapse" data-target="#recipe-content">
-            <h1>{this.state.recipeName}</h1>
-          </button>
-
-        <div id="recipe-content" className="collapse">
-            <ul>
-                <li>1</li>
-                <li>2</li>
-                <li>3</li>
-            </ul>
-        </div>
-      </div>
-    );
-  }
-}
-
-*/
-
 
 exports.default = Recipe;

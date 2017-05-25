@@ -1,21 +1,27 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import {Component, PropTypes} from 'react';
 
-class Store {
 
-  //{recipes: [{name:cookie, ingredients:[milk,eggs]},{},]}
-  constructor(name) {
+class Store extends Component {
+
+  //[{name:cookie, ingredients:[milk,eggs]},{},]
+  constructor(props) {
     //constructor(super);
-    this.name = name;
-    this.recipes = {recipes:[]};
+    super(props);
+    this.recipes = [];
   }
 
-  dispatchAction(state={}, action) {
-    return { recipes:handleAction(state.recipes,action)};
+  dispatchAction(state=[], action) {
+    return handleAction(state.recipes,action);
   }
 
+  render() {
 
+  }
 
   getlocalStorageState() {
-    let data = JSON.parse(localStorage.getItem('data'));
+    let data = localStorage.getItem('data');
 
     if (!data) {
       data = [];
@@ -25,15 +31,15 @@ class Store {
   }
 
   handleAction(state,action) {
-    let newState = Object.assign({},state);
+    let newState = Array.from(state);
 
     switch(action.type){
       case "ADD_RECIPE":
-        newState.recipes.push({name:action.name,ingredients:action.ingredients});
+        newState.push({name:action.name,ingredients:action.ingredients});
         return newState;
 
       case "SET_INGRED":
-        newState.recipes.map(function(value) {
+        newState.map(function(value) {
 
         if (value.name === action.name) {
           vaule.ingredients = action.ingredients;
@@ -43,7 +49,7 @@ class Store {
         return newState;
 
       case "DELETE_RECIPE":
-        newState.recipes = newState.recipes.filter(function(v,k) {
+        newState= newState.filter(function(v,k) {
 
         if (value.name != action.name) {
         return value;
@@ -56,7 +62,7 @@ class Store {
   }
 
    loadFromLocalStorage() {
-    let data = JSON.parse(localStorage.getItem('data'));
+    let data = localStorage.getItem('data');
 
     if (!data) {
       data = [];

@@ -12,13 +12,16 @@ class RecipeHolder extends Component {
 
     this.state = {
 
-      storeData:this.props.store.getlocalStorageState(),
-      recipesComponents: this._fillWithStoredRecipes(),
-      dispatch: this.props.store.dispatchAction,
+      storeData:this.props.store.getlocalStorageState(), //array
+      recipesComponents: [],
+      dispatch: this.props.dispatcher,
       showModal:false,
       nameOfNewRecipe:'',
       newRecipeIngredList:[],
     };
+
+    this.state.recipesComponents = this._fillWithStoredRecipes();
+    console.log(this.state.storeData);
   }
 
    close() {
@@ -43,13 +46,17 @@ class RecipeHolder extends Component {
     //data is[{"key":"1","ref":null,"props":{"name":"111111","indexOfThisRecipe":-1,"ingredList":["sdfsdf","","dfdfdfd"]},"_owner":null,"_store":{}}]
     let recipes = [];
 
-    this.state.storedData.recipes.map(function(value, key) {
-      recipes.push(
-       <Recipe name= {value.name} dispatcher={this.state.dispatch}
-        ingredList = {value.ingredients}>
-        </Recipe>
-      );
-    })
+    console.log("state = " + this.state);
+    console.log("data = " + this.state.storeData);
+    if (this.state.storeData.length > 0) {
+      this.state.storeData.map(function(value, key) {
+        recipes.push(
+         <Recipe name= {value.name} dispatcher={this.state.dispatch.bind(this)}
+          ingredList = {value.ingredients}>
+          </Recipe>
+        );
+      })
+    }
     return recipes;
   }
 
@@ -59,7 +66,7 @@ class RecipeHolder extends Component {
 
    _addRecipe(e) {
     e.preventDefault();
-    this.state.storeData = this.dispatch(this.state.storeData, {
+    this.state.storeData = this.state.dispatch(this.state.storeData, {
       type:"ADD_RECIPE",
       name:this.state.nameOfNewRecipe,
       ingredients:this.state.newRecipeIngredList,
