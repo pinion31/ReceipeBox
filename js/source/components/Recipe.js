@@ -21,9 +21,10 @@ class Recipe extends Component {
       showModal:false,
       newRecipeName:this.props.name,
       newListOfIngredients:this.props.ingredList,
-      deleteThisRecipe:this.props.removeThisReceiptCallback,
-      indexOfThisRecipe:this.props.indexOfThisRecipe,
-      updateThisRecipe:this.props.updateAllRecipes,
+      dispatch: this.props.dispatcher,
+      //deleteThisRecipe:this.props.removeThisRecipeCallback,
+      //indexOfThisRecipe:this.props.indexOfThisRecipe,
+      //updateThisRecipe:this.props.updateAllRecipes,
     }
   }
 
@@ -57,7 +58,7 @@ class Recipe extends Component {
 
     });
 
-    this.state.updateThisRecipe();
+   // this.state.updateThisRecipe();
   }
 
   _submitNewRecipeInfo() {
@@ -78,9 +79,10 @@ class Recipe extends Component {
 
   }
 
+  /*
   _deleteThisRecipe() {
     this.state.deleteThisRecipe(this.state.indexOfThisRecipe);
-  }
+  }*/
 
   render() {
     return (
@@ -104,7 +106,7 @@ class Recipe extends Component {
 
                 }
                <div>
-                <Button id="delete" onClick={this._deleteThisRecipe.bind(this)}>Delete Recipe</Button>
+                <Button id="delete">Delete Recipe</Button>
                 <Button id="edit" onClick={this.open.bind(this)}>Edit</Button>
                </div>
               </Well>
@@ -136,25 +138,4 @@ class Recipe extends Component {
   }
 }
 
-/*
-  render() {
-    return (
-      <div>
-          <button id="recipe" data-toggle="collapse" data-target="#recipe-content">
-            <h1>{this.state.recipeName}</h1>
-          </button>
-
-        <div id="recipe-content" className="collapse">
-            <ul>
-                <li>1</li>
-                <li>2</li>
-                <li>3</li>
-            </ul>
-        </div>
-      </div>
-    );
-  }
-}
-
-*/
 export default Recipe

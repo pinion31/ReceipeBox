@@ -12,14 +12,18 @@ var _RecipeHolder = require('./components/RecipeHolder');
 
 var _RecipeHolder2 = _interopRequireDefault(_RecipeHolder);
 
+var _Store = require('./components/Store');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var recipeStore = new _Store.Store("myStore");
 
 _reactDom2.default.render(_react2.default.createElement(
   'div',
   null,
   _react2.default.createElement(
     _RecipeHolder2.default,
-    null,
+    { store: recipeStore },
     ' '
   )
 ), document.getElementById("app"));
