@@ -50,7 +50,9 @@ var Recipe = function (_Component) {
       showModal: false,
       newRecipeName: _this.props.name,
       newListOfIngredients: _this.props.ingredList,
-      dispatch: _this.props.dispatcher
+      dispatch: _this.props.dispatcher,
+      saveData: _this.props.saveData,
+      deleteThisRecipe: _this.props.deleteThisRecipe
     };
     return _this;
   }
@@ -82,37 +84,45 @@ var Recipe = function (_Component) {
     key: '_updateIngredList',
     value: function _updateIngredList(evt) {
       var newIngredList = evt.target.value.split(',');
+      console.log("ingredients 0 = " + newIngredList);
 
       this.setState({
         newListOfIngredients: newIngredList
-
       });
 
+      console.log("newListOfIngredients  = " + this.state.newListOfIngredients);
+      console.log("listOfIngredients  = " + this.state.listOfIngredients);
       // this.state.updateThisRecipe();
+    }
+  }, {
+    key: 'deleteThisRecipe',
+    value: function deleteThisRecipe() {
+      var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.state.recipeName;
+
+      console.log("deleting " + name);
+      this.state.deleteThisRecipe(name);
     }
   }, {
     key: '_submitNewRecipeInfo',
     value: function _submitNewRecipeInfo() {
-
+      console.log("newListOfIngredients 2 = " + this.state.newListOfIngredients);
       //remove empty ingredients
       var newIngredList = this.state.newListOfIngredients.filter(function (value) {
         if (value.length > 0) {
           return value;
         }
       });
+      console.log("newIngredList = " + newIngredList);
 
       this.setState({
         recipeName: this.state.newRecipeName,
         listOfIngredients: newIngredList,
         showModal: false
       });
+
+      console.log("ingredients 2 = " + this.state.listOfIngredients);
+      this.state.saveData(this.state.recipeName, newIngredList);
     }
-
-    /*
-    _deleteThisRecipe() {
-      this.state.deleteThisRecipe(this.state.indexOfThisRecipe);
-    }*/
-
   }, {
     key: 'render',
     value: function render() {
@@ -158,7 +168,7 @@ var Recipe = function (_Component) {
                 null,
                 _react2.default.createElement(
                   _reactBootstrap.Button,
-                  { id: 'delete' },
+                  { id: 'delete', onClick: this.deleteThisRecipe.bind(this) },
                   'Delete Recipe'
                 ),
                 _react2.default.createElement(

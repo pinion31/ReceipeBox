@@ -10,10 +10,6 @@ import RecipeModal from './RecipeModal';
 class Recipe extends Component {
 
   constructor(props) {
-
-
-
-
     super(props);
     this.state = {
       recipeName: this.props.name,
@@ -22,9 +18,8 @@ class Recipe extends Component {
       newRecipeName:this.props.name,
       newListOfIngredients:this.props.ingredList,
       dispatch: this.props.dispatcher,
-      //deleteThisRecipe:this.props.removeThisRecipeCallback,
-      //indexOfThisRecipe:this.props.indexOfThisRecipe,
-      //updateThisRecipe:this.props.updateAllRecipes,
+      saveData:this.props.saveData,
+      deleteThisRecipe: this.props.deleteThisRecipe,
     }
   }
 
@@ -52,23 +47,32 @@ class Recipe extends Component {
 
   _updateIngredList(evt) {
     let newIngredList = evt.target.value.split(',');
+    console.log("ingredients 0 = " + newIngredList);
 
     this.setState({
       newListOfIngredients:newIngredList,
-
     });
 
+    console.log("newListOfIngredients  = " + this.state.newListOfIngredients);
+    console.log("listOfIngredients  = " + this.state.listOfIngredients);
    // this.state.updateThisRecipe();
   }
 
-  _submitNewRecipeInfo() {
+  deleteThisRecipe(name=this.state.recipeName) {
+     console.log("deleting " + name);
+    this.state.deleteThisRecipe(name);
 
+  }
+
+  _submitNewRecipeInfo() {
+    console.log("newListOfIngredients 2 = " + this.state.newListOfIngredients);
      //remove empty ingredients
-    var newIngredList = this.state.newListOfIngredients.filter(function(value){
+    let newIngredList = this.state.newListOfIngredients.filter(function(value){
       if (value.length > 0) {
         return value;
     }
     });
+    console.log("newIngredList = " + newIngredList);
 
     this.setState({
       recipeName: this.state.newRecipeName,
@@ -76,13 +80,10 @@ class Recipe extends Component {
       showModal:false,
     });
 
+    console.log("ingredients 2 = " + this.state.listOfIngredients);
+    this.state.saveData(this.state.recipeName, newIngredList);
 
   }
-
-  /*
-  _deleteThisRecipe() {
-    this.state.deleteThisRecipe(this.state.indexOfThisRecipe);
-  }*/
 
   render() {
     return (
@@ -106,7 +107,7 @@ class Recipe extends Component {
 
                 }
                <div>
-                <Button id="delete">Delete Recipe</Button>
+                <Button id="delete" onClick={this.deleteThisRecipe.bind(this)}>Delete Recipe</Button>
                 <Button id="edit" onClick={this.open.bind(this)}>Edit</Button>
                </div>
               </Well>

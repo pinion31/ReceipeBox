@@ -19,7 +19,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var recipeStore = {
 
   getlocalStorageState: function getlocalStorageState() {
-    var data = localStorage.getItem('data');
+    var data = JSON.parse(localStorage.getItem('data'));
 
     if (!data) {
       data = [];
@@ -33,7 +33,15 @@ var recipeStore = {
 
     switch (action.type) {
       case "ADD_RECIPE":
-        newState.push({ name: action.name, ingredients: action.ingredients });
+
+        //filter ending commas
+        var newIngredList = action.ingredients.filter(function (value) {
+          if (value.length > 0) {
+            return value;
+          }
+        });
+
+        newState.push({ name: action.name, ingredients: newIngredList });
         return newState;
 
       case "SET_INGRED":
@@ -47,7 +55,7 @@ var recipeStore = {
         return newState;
 
       case "DELETE_RECIPE":
-        newState = newState.filter(function (v, k) {
+        newState = newState.filter(function (value, k) {
 
           if (value.name != action.name) {
             return value;
@@ -60,7 +68,7 @@ var recipeStore = {
   },
 
   loadFromLocalStorage: function loadFromLocalStorage() {
-    var data = localStorage.getItem('data');
+    var data = JSON.parse(localStorage.getItem('data'));
 
     if (!data) {
       data = [];
@@ -83,6 +91,32 @@ var recipeStore = {
     };
 
     localStorage.setItem('data', JSON.stringify(state, replacer));
+  },
+
+  //callback from recipeholder to save ingredients to local storage
+  saveIngredientsFromRecipe: function saveIngredientsFromRecipe(state, nameofRecipe, ingredients) {
+
+    var currentState = Array.from(state);
+
+    currentState.map(function (value) {
+      if (value.name === nameofRecipe) {
+        value.ingredients = ingredients;
+      }
+    });
+
+    var seen = [];
+
+    var replacer = function replacer(key, value) {
+      if (value != null && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) == "object") {
+        if (seen.indexOf(value) >= 0) {
+          return;
+        }
+        seen.push(value);
+      }
+      return value;
+    };
+
+    localStorage.setItem('data', JSON.stringify(currentState, replacer));
   }
 
 };
@@ -99,7 +133,9 @@ _reactDom2.default.render(_react2.default.createElement(
   null,
   _react2.default.createElement(
     _RecipeHolder2.default,
-    { store: recipeStore, dispatcher: dispatchAction },
+    { store: recipeStore, dispatcher: dispatchAction,
+      saveIngredients: recipeStore.saveIngredientsFromRecipe,
+      saveRecipes: recipeStore.saveToLocalStorage },
     ' '
   )
 ), document.getElementById("app"));

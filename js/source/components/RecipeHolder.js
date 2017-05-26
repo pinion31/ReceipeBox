@@ -15,13 +15,14 @@ class RecipeHolder extends Component {
       storeData:this.props.store.getlocalStorageState(), //array
       recipesComponents: [],
       dispatch: this.props.dispatcher,
+      saveToLocalStorageRecipes:this.props.saveRecipes,
+      saveToLocalStorageIngredients:this.props.saveIngredients,
       showModal:false,
       nameOfNewRecipe:'',
       newRecipeIngredList:[],
     };
-
-    this.state.recipesComponents = this._fillWithStoredRecipes();
-    console.log(this.state.storeData);
+    //this.renderRecipes().bind(this)();
+    this.state.recipesComponents = this._fillWithStoredRecipes(this.props.dispatcher, this._saveWrapper.bind(this), this.deleteARecipe.bind(this));
   }
 
    close() {
@@ -42,17 +43,16 @@ class RecipeHolder extends Component {
   //listOfRecipes: this._formatData(),
   //dispatch: this.props.store.dispatchAction,
 //{recipes: [{name:cookie, ingredients:[milk,eggs]},{},]}
-  _fillWithStoredRecipes(){
-    //data is[{"key":"1","ref":null,"props":{"name":"111111","indexOfThisRecipe":-1,"ingredList":["sdfsdf","","dfdfdfd"]},"_owner":null,"_store":{}}]
+  _fillWithStoredRecipes(dispatchFunc, saveFunc, deleteFunc){
+
     let recipes = [];
 
-    console.log("state = " + this.state);
-    console.log("data = " + this.state.storeData);
     if (this.state.storeData.length > 0) {
       this.state.storeData.map(function(value, key) {
         recipes.push(
-         <Recipe name= {value.name} dispatcher={this.state.dispatch.bind(this)}
-          ingredList = {value.ingredients}>
+         <Recipe name= {value.name} dispatcher={dispatchFunc}
+          ingredList = {value.ingredients} key={key} saveData={saveFunc}
+          deleteThisRecipe = {deleteFunc}>
           </Recipe>
         );
       })
@@ -74,39 +74,19 @@ class RecipeHolder extends Component {
 
     //sets new state after adding recipe
     this.setState({
-      recipesComponents: this._fillWithStoredRecipes(),
+      recipesComponents: this._fillWithStoredRecipes(this.state.dispatch, this._saveWrapper.bind(this), this.deleteARecipe.bind(this)),
       showModal:false, //closes modal after adding recipe
     });
 
+    //this.renderRecipes().bind(this)();
+    this.state.saveToLocalStorageRecipes(this.state.storeData);
 
   }
 
-  //deletes recipe with client action
-  /*
-  _removeRecipe(indexOfRecipeToRemove){
-    let arrToModify = Array.from(this.state.listOfRecipes);
-    arrToModify.splice(indexOfRecipeToRemove,1);
-
-    this.setState({
-      listOfRecipes: arrToModify,
-    });
-
-    var seen = [];
-
-    var replacer = function(key, value) {
-      if (value != null && typeof value == "object") {
-        if (seen.indexOf(value) >= 0) {
-          return;
-        }
-        seen.push(value);
-      }
-      return value;
-    };
-
-    localStorage.setItem('data', JSON.stringify(arrToModify,replacer));
-
+  _saveWrapper(name,ingredients) {
+    this.state.saveToLocalStorageIngredients(this.state.storeData, name, ingredients);
   }
-*/
+
   //creates new recipe with client action
   _updateRecipeName(evt) {
     this.setState({
@@ -114,6 +94,39 @@ class RecipeHolder extends Component {
     });
   }
 
+  renderRecipes() {
+
+    this.setState({
+      recipesComponents:this._fillWithStoredRecipes(this.props.dispatcher, this._saveWrapper.bind(this), this.deleteARecipe.bind(this)),
+    })
+
+  }
+
+  deleteARecipe(recipeToDelete) {
+
+    /*
+    let currentState = Array.from(this.state.storeData);
+    console.log("deleteARecipe " + recipeToDelete);
+    currentState = currentState.filter(function(value) {
+        if (value.name != recipeToDelete) {
+          return value;
+        }
+    });*/
+    let currentState = Array.from(this.state.storeData);
+
+    currentState = this.state.dispatch(currentState , {
+      type:"DELETE_RECIPE",
+      name:recipeToDelete,
+      });
+
+    this.setState ({
+      storeData:currentState,
+      recipesComponents: this._fillWithStoredRecipes(this.state.dispatch, this._saveWrapper.bind(this), this.deleteARecipe),
+      showModal:false, //closes modal after adding recipe
+    })
+    //this.renderRecipes().bind(this)();
+    this.state.saveToLocalStorageRecipes(currentState);
+  }
 //add initial ingredients to new recipe
   _updateIngredList(evt) {
     let newIngredList = evt.target.value.split(',');
@@ -121,8 +134,6 @@ class RecipeHolder extends Component {
     this.setState({
       newRecipeIngredList:newIngredList,
     });
-
-
   }
 
 
@@ -159,10 +170,8 @@ class RecipeHolder extends Component {
         </Modal>
 
       </div>
-
     );
   }
-
 }
 
 export default RecipeHolder
