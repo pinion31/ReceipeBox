@@ -52,8 +52,7 @@ var Recipe = function (_Component) {
       newRecipeName: _this.props.name,
       newListOfIngredients: _this.props.ingredList,
       dispatch: _this.props.dispatcher,
-      saveData: _this.props.saveData,
-      deleteThisRecipe: _this.props.deleteThisRecipe
+      deleteRecipe: _this.props.deleteARecipe
     };
     return _this;
   }
@@ -96,14 +95,6 @@ var Recipe = function (_Component) {
       // this.state.updateThisRecipe();
     }
   }, {
-    key: 'deleteThisRecipe',
-    value: function deleteThisRecipe() {
-      var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.state.recipeName;
-
-      console.log("deleting " + name);
-      this.state.deleteThisRecipe(name);
-    }
-  }, {
     key: '_submitNewRecipeInfo',
     value: function _submitNewRecipeInfo() {
       console.log("newListOfIngredients 2 = " + this.state.newListOfIngredients);
@@ -122,7 +113,11 @@ var Recipe = function (_Component) {
       });
 
       console.log("ingredients 2 = " + this.state.listOfIngredients);
-      this.state.saveData(this.state.recipeName, newIngredList);
+    }
+  }, {
+    key: 'deleteThisRecipe',
+    value: function deleteThisRecipe() {
+      this.state.deleteRecipe(this.state.recipeName);
     }
   }, {
     key: 'render',
@@ -278,16 +273,14 @@ var RecipeHolder = function (_Component) {
     _this.state = {
 
       storeData: _this.props.store.getlocalStorageState(), //array
-      recipesComponents: [],
+      recipesComponents: _this._buildRecipeComponents(_this.props.store.getlocalStorageState(), _this.props.dispatcher, _this.deleteARecipe.bind(_this)),
       dispatch: _this.props.dispatcher,
-      saveToLocalStorageRecipes: _this.props.saveRecipes,
-      saveToLocalStorageIngredients: _this.props.saveIngredients,
       showModal: false,
       nameOfNewRecipe: '',
       newRecipeIngredList: []
     };
     //this.renderRecipes().bind(this)();
-    _this.state.recipesComponents = _this._fillWithStoredRecipes(_this.props.dispatcher, _this._saveWrapper.bind(_this), _this.deleteARecipe.bind(_this));
+    //this.state.recipesComponents = this._buildRecipeComponents(this.props.dispatcher);
     return _this;
   }
 
@@ -313,16 +306,16 @@ var RecipeHolder = function (_Component) {
     //{recipes: [{name:cookie, ingredients:[milk,eggs]},{},]}
 
   }, {
-    key: '_fillWithStoredRecipes',
-    value: function _fillWithStoredRecipes(dispatchFunc, saveFunc, deleteFunc) {
+    key: '_buildRecipeComponents',
+    value: function _buildRecipeComponents(state, dispatchFunc) {
 
+      var currentState = Array.from(state);
       var recipes = [];
 
-      if (this.state.storeData.length > 0) {
-        this.state.storeData.map(function (value, key) {
+      if (currentState.length > 0) {
+        currentState.map(function (value, key) {
           recipes.push(_react2.default.createElement(_Recipe2.default, { name: value.name, dispatcher: dispatchFunc,
-            ingredList: value.ingredients, key: key, saveData: saveFunc,
-            deleteThisRecipe: deleteFunc }));
+            ingredList: value.ingredients, key: key }));
         });
       }
       return recipes;
@@ -344,16 +337,11 @@ var RecipeHolder = function (_Component) {
 
       //sets new state after adding recipe
       this.setState({
-        recipesComponents: this._fillWithStoredRecipes(this.state.dispatch, this._saveWrapper.bind(this), this.deleteARecipe.bind(this)),
+        recipesComponents: this._buildRecipeComponents(this.state.storeData, this.state.dispatch, this.deleteARecipe.bind(this)),
         showModal: false });
 
       //this.renderRecipes().bind(this)();
-      this.state.saveToLocalStorageRecipes(this.state.storeData);
-    }
-  }, {
-    key: '_saveWrapper',
-    value: function _saveWrapper(name, ingredients) {
-      this.state.saveToLocalStorageIngredients(this.state.storeData, name, ingredients);
+
     }
 
     //creates new recipe with client action
@@ -370,7 +358,7 @@ var RecipeHolder = function (_Component) {
     value: function renderRecipes() {
 
       this.setState({
-        recipesComponents: this._fillWithStoredRecipes(this.props.dispatcher, this._saveWrapper.bind(this), this.deleteARecipe.bind(this))
+        recipesComponents: this._buildRecipeComponents(this.state.storeData, this.props.dispatcher, this.deleteARecipe.bind(this))
       });
     }
   }, {
@@ -394,10 +382,9 @@ var RecipeHolder = function (_Component) {
 
       this.setState({
         storeData: currentState,
-        recipesComponents: this._fillWithStoredRecipes(this.state.dispatch, this._saveWrapper.bind(this), this.deleteARecipe),
+        recipesComponents: this._buildRecipeComponents(this.state.storeData, this.state.dispatch, this.deleteARecipe.bind(this)),
         showModal: false });
       //this.renderRecipes().bind(this)();
-      this.state.saveToLocalStorageRecipes(currentState);
     }
     //add initial ingredients to new recipe
 
@@ -614,7 +601,7 @@ var recipeStore = {
     return data;
   },
 
-  handleAction: function handleAction(state, action) {
+  handleAction: function handleAction(state, action, save) {
     var newState = Array.from(state);
 
     switch (action.type) {
@@ -628,6 +615,7 @@ var recipeStore = {
         });
 
         newState.push({ name: action.name, ingredients: newIngredList });
+        save(newState);
         return newState;
 
       case "SET_INGRED":
@@ -638,6 +626,7 @@ var recipeStore = {
           }
           return value;
         });
+        save(newState);
         return newState;
 
       case "DELETE_RECIPE":
@@ -647,6 +636,7 @@ var recipeStore = {
             return value;
           }
         });
+        save(newState);
         return newState;
       default:
         return state;
@@ -677,32 +667,6 @@ var recipeStore = {
     };
 
     localStorage.setItem('data', JSON.stringify(state, replacer));
-  },
-
-  //callback from recipeholder to save ingredients to local storage
-  saveIngredientsFromRecipe: function saveIngredientsFromRecipe(state, nameofRecipe, ingredients) {
-
-    var currentState = Array.from(state);
-
-    currentState.map(function (value) {
-      if (value.name === nameofRecipe) {
-        value.ingredients = ingredients;
-      }
-    });
-
-    var seen = [];
-
-    var replacer = function replacer(key, value) {
-      if (value != null && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) == "object") {
-        if (seen.indexOf(value) >= 0) {
-          return;
-        }
-        seen.push(value);
-      }
-      return value;
-    };
-
-    localStorage.setItem('data', JSON.stringify(currentState, replacer));
   }
 
 };
@@ -711,19 +675,13 @@ var dispatchAction = function dispatchAction() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
   var action = arguments[1];
 
-  return recipeStore.handleAction(state, action);
+  return recipeStore.handleAction(state, action, recipeStore.saveToLocalStorage);
 };
 
 _reactDom2.default.render(_react2.default.createElement(
   'div',
   null,
-  _react2.default.createElement(
-    _RecipeHolder2.default,
-    { store: recipeStore, dispatcher: dispatchAction,
-      saveIngredients: recipeStore.saveIngredientsFromRecipe,
-      saveRecipes: recipeStore.saveToLocalStorage },
-    ' '
-  )
+  _react2.default.createElement(_RecipeHolder2.default, { store: recipeStore, dispatcher: dispatchAction })
 ), document.getElementById("app"));
 },{"./components/RecipeHolder":2,"react":439,"react-dom":267}],5:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/array/from"), __esModule: true };
@@ -1145,7 +1103,7 @@ $export.P = 8;   // proto
 $export.B = 16;  // bind
 $export.W = 32;  // wrap
 $export.U = 64;  // safe
-$export.R = 128; // real proto method for `library` 
+$export.R = 128; // real proto method for `library`
 module.exports = $export;
 },{"./_core":34,"./_ctx":36,"./_global":44,"./_hide":46}],43:[function(require,module,exports){
 module.exports = function(exec){
@@ -3248,7 +3206,7 @@ module.exports = camelizeStyleName;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 var isTextNode = require('./isTextNode');
@@ -3503,7 +3461,7 @@ module.exports = createNodesFromMarkup;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 function makeEmptyFunction(arg) {
@@ -3944,7 +3902,7 @@ module.exports = isTextNode;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  * @typechecks static-only
  */
 
@@ -4032,7 +3990,7 @@ module.exports = performanceNow;
  * of patent rights can be found in the PATENTS file in the same directory.
  *
  * @typechecks
- * 
+ *
  */
 
 /*eslint-disable no-self-compare */
@@ -29553,7 +29511,7 @@ module.exports = CSSPropertyOperations;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -31292,7 +31250,7 @@ module.exports = EventPluginHub;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -32243,7 +32201,7 @@ module.exports = HTMLDOMPropertyConfig;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -32443,7 +32401,7 @@ module.exports = LinkedValueUtils;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -33071,7 +33029,7 @@ module.exports = ReactComponentBrowserEnvironment;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -37048,7 +37006,7 @@ module.exports = ReactDOMUnknownPropertyHook;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -37562,7 +37520,7 @@ module.exports = {
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -37613,7 +37571,7 @@ module.exports = ReactEmptyComponent;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -37878,7 +37836,7 @@ module.exports = ReactEventListener;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -37970,7 +37928,7 @@ module.exports = ReactHostComponent;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -38211,7 +38169,7 @@ module.exports = ReactInstanceMap;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -38237,7 +38195,7 @@ module.exports = { debugTool: debugTool };
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -39318,7 +39276,7 @@ module.exports = ReactMultiChild;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -39360,7 +39318,7 @@ module.exports = ReactNodeTypes;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -39456,7 +39414,7 @@ module.exports = ReactOwner;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -39482,7 +39440,7 @@ module.exports = ReactPropTypeLocationNames;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -39849,7 +39807,7 @@ module.exports = ReactReconciler;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -40031,7 +39989,7 @@ module.exports = ReactServerRenderingTransaction;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -41170,7 +41128,7 @@ module.exports = SelectEventPlugin;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -42245,7 +42203,7 @@ module.exports = SyntheticWheelEvent;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -42499,7 +42457,7 @@ module.exports = ViewportMetrics;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -42558,7 +42516,7 @@ module.exports = accumulateInto;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -42990,7 +42948,7 @@ module.exports = findDOMNode;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -43067,7 +43025,7 @@ module.exports = flattenChildren;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -43358,7 +43316,7 @@ module.exports = getHostComponentFromComposite;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -43798,7 +43756,7 @@ module.exports = isEventSupported;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -43875,7 +43833,7 @@ module.exports = quoteAttributeValueForBrowser;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 'use strict';
 
@@ -48320,7 +48278,7 @@ module.exports = ReactComponent;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -48655,7 +48613,7 @@ module.exports = ReactComponentTreeHook;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -49624,7 +49582,7 @@ module.exports=require(345)
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';
@@ -49742,7 +49700,7 @@ module.exports=require(378)
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ *
  */
 
 'use strict';

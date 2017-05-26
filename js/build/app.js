@@ -28,7 +28,7 @@ var recipeStore = {
     return data;
   },
 
-  handleAction: function handleAction(state, action) {
+  handleAction: function handleAction(state, action, save) {
     var newState = Array.from(state);
 
     switch (action.type) {
@@ -42,6 +42,7 @@ var recipeStore = {
         });
 
         newState.push({ name: action.name, ingredients: newIngredList });
+        save(newState);
         return newState;
 
       case "SET_INGRED":
@@ -52,6 +53,7 @@ var recipeStore = {
           }
           return value;
         });
+        save(newState);
         return newState;
 
       case "DELETE_RECIPE":
@@ -61,6 +63,7 @@ var recipeStore = {
             return value;
           }
         });
+        save(newState);
         return newState;
       default:
         return state;
@@ -91,32 +94,6 @@ var recipeStore = {
     };
 
     localStorage.setItem('data', JSON.stringify(state, replacer));
-  },
-
-  //callback from recipeholder to save ingredients to local storage
-  saveIngredientsFromRecipe: function saveIngredientsFromRecipe(state, nameofRecipe, ingredients) {
-
-    var currentState = Array.from(state);
-
-    currentState.map(function (value) {
-      if (value.name === nameofRecipe) {
-        value.ingredients = ingredients;
-      }
-    });
-
-    var seen = [];
-
-    var replacer = function replacer(key, value) {
-      if (value != null && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) == "object") {
-        if (seen.indexOf(value) >= 0) {
-          return;
-        }
-        seen.push(value);
-      }
-      return value;
-    };
-
-    localStorage.setItem('data', JSON.stringify(currentState, replacer));
   }
 
 };
@@ -125,17 +102,11 @@ var dispatchAction = function dispatchAction() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
   var action = arguments[1];
 
-  return recipeStore.handleAction(state, action);
+  return recipeStore.handleAction(state, action, recipeStore.saveToLocalStorage);
 };
 
 _reactDom2.default.render(_react2.default.createElement(
   'div',
   null,
-  _react2.default.createElement(
-    _RecipeHolder2.default,
-    { store: recipeStore, dispatcher: dispatchAction,
-      saveIngredients: recipeStore.saveIngredientsFromRecipe,
-      saveRecipes: recipeStore.saveToLocalStorage },
-    ' '
-  )
+  _react2.default.createElement(_RecipeHolder2.default, { store: recipeStore, dispatcher: dispatchAction })
 ), document.getElementById("app"));

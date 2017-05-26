@@ -51,8 +51,7 @@ var Recipe = function (_Component) {
       newRecipeName: _this.props.name,
       newListOfIngredients: _this.props.ingredList,
       dispatch: _this.props.dispatcher,
-      saveData: _this.props.saveData,
-      deleteThisRecipe: _this.props.deleteThisRecipe
+      deleteRecipe: _this.props.deleteARecipe
     };
     return _this;
   }
@@ -95,14 +94,6 @@ var Recipe = function (_Component) {
       // this.state.updateThisRecipe();
     }
   }, {
-    key: 'deleteThisRecipe',
-    value: function deleteThisRecipe() {
-      var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.state.recipeName;
-
-      console.log("deleting " + name);
-      this.state.deleteThisRecipe(name);
-    }
-  }, {
     key: '_submitNewRecipeInfo',
     value: function _submitNewRecipeInfo() {
       console.log("newListOfIngredients 2 = " + this.state.newListOfIngredients);
@@ -121,7 +112,11 @@ var Recipe = function (_Component) {
       });
 
       console.log("ingredients 2 = " + this.state.listOfIngredients);
-      this.state.saveData(this.state.recipeName, newIngredList);
+    }
+  }, {
+    key: 'deleteThisRecipe',
+    value: function deleteThisRecipe() {
+      this.state.deleteRecipe(this.state.recipeName);
     }
   }, {
     key: 'render',
@@ -168,7 +163,7 @@ var Recipe = function (_Component) {
                 null,
                 _react2.default.createElement(
                   _reactBootstrap.Button,
-                  { id: 'delete', onClick: this.deleteThisRecipe.bind(this) },
+                  { id: 'delete', onClick: this.deleteThisRecipe },
                   'Delete Recipe'
                 ),
                 _react2.default.createElement(

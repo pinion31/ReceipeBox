@@ -43,16 +43,14 @@ var RecipeHolder = function (_Component) {
     _this.state = {
 
       storeData: _this.props.store.getlocalStorageState(), //array
-      recipesComponents: [],
+      recipesComponents: _this._buildRecipeComponents(_this.props.store.getlocalStorageState(), _this.props.dispatcher, _this.deleteARecipe.bind(_this)),
       dispatch: _this.props.dispatcher,
-      saveToLocalStorageRecipes: _this.props.saveRecipes,
-      saveToLocalStorageIngredients: _this.props.saveIngredients,
       showModal: false,
       nameOfNewRecipe: '',
       newRecipeIngredList: []
     };
     //this.renderRecipes().bind(this)();
-    _this.state.recipesComponents = _this._fillWithStoredRecipes(_this.props.dispatcher, _this._saveWrapper.bind(_this), _this.deleteARecipe.bind(_this));
+    //this.state.recipesComponents = this._buildRecipeComponents(this.props.dispatcher);
     return _this;
   }
 
@@ -78,16 +76,16 @@ var RecipeHolder = function (_Component) {
     //{recipes: [{name:cookie, ingredients:[milk,eggs]},{},]}
 
   }, {
-    key: '_fillWithStoredRecipes',
-    value: function _fillWithStoredRecipes(dispatchFunc, saveFunc, deleteFunc) {
+    key: '_buildRecipeComponents',
+    value: function _buildRecipeComponents(state, dispatchFunc) {
 
+      var currentState = Array.from(state);
       var recipes = [];
 
-      if (this.state.storeData.length > 0) {
-        this.state.storeData.map(function (value, key) {
+      if (currentState.length > 0) {
+        currentState.map(function (value, key) {
           recipes.push(_react2.default.createElement(_Recipe2.default, { name: value.name, dispatcher: dispatchFunc,
-            ingredList: value.ingredients, key: key, saveData: saveFunc,
-            deleteThisRecipe: deleteFunc }));
+            ingredList: value.ingredients, key: key }));
         });
       }
       return recipes;
@@ -109,16 +107,11 @@ var RecipeHolder = function (_Component) {
 
       //sets new state after adding recipe
       this.setState({
-        recipesComponents: this._fillWithStoredRecipes(this.state.dispatch, this._saveWrapper.bind(this), this.deleteARecipe.bind(this)),
+        recipesComponents: this._buildRecipeComponents(this.state.storeData, this.state.dispatch, this.deleteARecipe.bind(this)),
         showModal: false });
 
       //this.renderRecipes().bind(this)();
-      this.state.saveToLocalStorageRecipes(this.state.storeData);
-    }
-  }, {
-    key: '_saveWrapper',
-    value: function _saveWrapper(name, ingredients) {
-      this.state.saveToLocalStorageIngredients(this.state.storeData, name, ingredients);
+
     }
 
     //creates new recipe with client action
@@ -135,7 +128,7 @@ var RecipeHolder = function (_Component) {
     value: function renderRecipes() {
 
       this.setState({
-        recipesComponents: this._fillWithStoredRecipes(this.props.dispatcher, this._saveWrapper.bind(this), this.deleteARecipe.bind(this))
+        recipesComponents: this._buildRecipeComponents(this.state.storeData, this.props.dispatcher, this.deleteARecipe.bind(this))
       });
     }
   }, {
@@ -159,10 +152,9 @@ var RecipeHolder = function (_Component) {
 
       this.setState({
         storeData: currentState,
-        recipesComponents: this._fillWithStoredRecipes(this.state.dispatch, this._saveWrapper.bind(this), this.deleteARecipe),
+        recipesComponents: this._buildRecipeComponents(this.state.storeData, this.state.dispatch, this.deleteARecipe.bind(this)),
         showModal: false });
       //this.renderRecipes().bind(this)();
-      this.state.saveToLocalStorageRecipes(currentState);
     }
     //add initial ingredients to new recipe
 

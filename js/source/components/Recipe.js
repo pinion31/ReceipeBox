@@ -18,8 +18,7 @@ class Recipe extends Component {
       newRecipeName:this.props.name,
       newListOfIngredients:this.props.ingredList,
       dispatch: this.props.dispatcher,
-      saveData:this.props.saveData,
-      deleteThisRecipe: this.props.deleteThisRecipe,
+      deleteRecipe:this.props.deleteARecipe,
     }
   }
 
@@ -58,11 +57,6 @@ class Recipe extends Component {
    // this.state.updateThisRecipe();
   }
 
-  deleteThisRecipe(name=this.state.recipeName) {
-     console.log("deleting " + name);
-    this.state.deleteThisRecipe(name);
-
-  }
 
   _submitNewRecipeInfo() {
     console.log("newListOfIngredients 2 = " + this.state.newListOfIngredients);
@@ -81,7 +75,12 @@ class Recipe extends Component {
     });
 
     console.log("ingredients 2 = " + this.state.listOfIngredients);
-    this.state.saveData(this.state.recipeName, newIngredList);
+
+
+  }
+
+  deleteThisRecipe() {
+    this.state.deleteRecipe(this.state.recipeName);
 
   }
 
@@ -107,7 +106,7 @@ class Recipe extends Component {
 
                 }
                <div>
-                <Button id="delete" onClick={this.deleteThisRecipe.bind(this)}>Delete Recipe</Button>
+                <Button id="delete" onClick={this.deleteThisRecipe}>Delete Recipe</Button>
                 <Button id="edit" onClick={this.open.bind(this)}>Edit</Button>
                </div>
               </Well>

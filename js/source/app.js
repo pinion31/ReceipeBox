@@ -15,7 +15,7 @@ const recipeStore =  {
     return data;
   },
 
-  handleAction: (state,action) => {
+  handleAction: (state,action, save) => {
     let newState = Array.from(state);
 
     switch(action.type){
@@ -29,6 +29,7 @@ const recipeStore =  {
         });
 
         newState.push({name:action.name,ingredients:newIngredList});
+        save(newState);
         return newState;
 
       case "SET_INGRED":
@@ -39,6 +40,7 @@ const recipeStore =  {
         }
         return value;
         });
+        save(newState);
         return newState;
 
       case "DELETE_RECIPE":
@@ -48,6 +50,7 @@ const recipeStore =  {
             return value;
           }
           });
+        save(newState);
         return newState;
       default:
          return state;
@@ -81,7 +84,9 @@ const recipeStore =  {
 
   },
 
+
   //callback from recipeholder to save ingredients to local storage
+  /*
   saveIngredientsFromRecipe: (state, nameofRecipe,ingredients) => {
 
     var currentState = Array.from(state);
@@ -107,7 +112,7 @@ const recipeStore =  {
     localStorage.setItem('data', JSON.stringify(currentState, replacer));
   },
 
-
+*/
 /*
   dispatchAction: (state={}, action) => {
     return { recipes: this.handleAction(state.recipes,action)};
@@ -116,14 +121,13 @@ const recipeStore =  {
 }
 
 let dispatchAction = (state=[], action) => {
-    return  recipeStore.handleAction(state,action);
+    return  recipeStore.handleAction(state,action, recipeStore.saveToLocalStorage);
 }
 
 ReactDOM.render (
   <div>
-  <RecipeHolder store={recipeStore} dispatcher={dispatchAction}
-  saveIngredients={recipeStore.saveIngredientsFromRecipe}
-  saveRecipes={recipeStore.saveToLocalStorage}> </RecipeHolder>
+  <RecipeHolder store={recipeStore} dispatcher={dispatchAction}>
+   </RecipeHolder>
   </div>,
   document.getElementById("app")
 );
