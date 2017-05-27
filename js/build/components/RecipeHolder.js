@@ -43,7 +43,7 @@ var RecipeHolder = function (_Component) {
     _this.state = {
 
       storeData: _this.props.store.getlocalStorageState(), //array
-      recipesComponents: _this._buildRecipeComponents(_this.props.store.getlocalStorageState(), _this.props.dispatcher, _this.deleteARecipe.bind(_this)),
+      recipesComponents: _this._buildRecipeComponents(_this.props.store.getlocalStorageState(), _this.props.dispatcher, _this.deleteARecipe.bind(_this), _this.sendSaveDataUp.bind(_this)),
       dispatch: _this.props.dispatcher,
       showModal: false,
       nameOfNewRecipe: '',
@@ -77,15 +77,15 @@ var RecipeHolder = function (_Component) {
 
   }, {
     key: '_buildRecipeComponents',
-    value: function _buildRecipeComponents(state, dispatchFunc) {
+    value: function _buildRecipeComponents(state, dispatchFunc, deleteFunc, saveFunc) {
 
       var currentState = Array.from(state);
       var recipes = [];
 
       if (currentState.length > 0) {
         currentState.map(function (value, key) {
-          recipes.push(_react2.default.createElement(_Recipe2.default, { name: value.name, dispatcher: dispatchFunc,
-            ingredList: value.ingredients, key: key }));
+          recipes.push(_react2.default.createElement(_Recipe2.default, { name: value.name, dispatcher: dispatchFunc, saveCallback: saveFunc,
+            ingredList: value.ingredients, key: key, deleteRecipe: deleteFunc }));
         });
       }
       return recipes;
@@ -107,7 +107,7 @@ var RecipeHolder = function (_Component) {
 
       //sets new state after adding recipe
       this.setState({
-        recipesComponents: this._buildRecipeComponents(this.state.storeData, this.state.dispatch, this.deleteARecipe.bind(this)),
+        recipesComponents: this._buildRecipeComponents(this.state.storeData, this.state.dispatch, this.deleteARecipe.bind(this), this.sendSaveDataUp.bind(this)),
         showModal: false });
 
       //this.renderRecipes().bind(this)();
@@ -128,21 +128,25 @@ var RecipeHolder = function (_Component) {
     value: function renderRecipes() {
 
       this.setState({
-        recipesComponents: this._buildRecipeComponents(this.state.storeData, this.props.dispatcher, this.deleteARecipe.bind(this))
+        recipesComponents: this._buildRecipeComponents(this.state.storeData, this.props.dispatcher, this.deleteARecipe.bind(this), this.sendSaveDataUp.bind(this))
+      });
+    }
+  }, {
+    key: 'sendSaveDataUp',
+    value: function sendSaveDataUp(name, ingredients, actionType) {
+      var newName = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "";
+
+
+      this.state.storeData = this.state.dispatch(this.state.storeData, { type: actionType,
+        name: name,
+        ingredients: ingredients,
+        newName: newName
       });
     }
   }, {
     key: 'deleteARecipe',
     value: function deleteARecipe(recipeToDelete) {
 
-      /*
-      let currentState = Array.from(this.state.storeData);
-      console.log("deleteARecipe " + recipeToDelete);
-      currentState = currentState.filter(function(value) {
-          if (value.name != recipeToDelete) {
-            return value;
-          }
-      });*/
       var currentState = Array.from(this.state.storeData);
 
       currentState = this.state.dispatch(currentState, {
@@ -152,7 +156,7 @@ var RecipeHolder = function (_Component) {
 
       this.setState({
         storeData: currentState,
-        recipesComponents: this._buildRecipeComponents(this.state.storeData, this.state.dispatch, this.deleteARecipe.bind(this)),
+        recipesComponents: this._buildRecipeComponents(currentState, this.state.dispatch, this.deleteARecipe.bind(this), this.sendSaveDataUp.bind(this)),
         showModal: false });
       //this.renderRecipes().bind(this)();
     }

@@ -51,7 +51,8 @@ var Recipe = function (_Component) {
       newRecipeName: _this.props.name,
       newListOfIngredients: _this.props.ingredList,
       dispatch: _this.props.dispatcher,
-      deleteRecipe: _this.props.deleteARecipe
+      deleteRecipe: _this.props.deleteRecipe,
+      saveCallback: _this.props.saveCallback
     };
     return _this;
   }
@@ -83,27 +84,20 @@ var Recipe = function (_Component) {
     key: '_updateIngredList',
     value: function _updateIngredList(evt) {
       var newIngredList = evt.target.value.split(',');
-      console.log("ingredients 0 = " + newIngredList);
 
       this.setState({
         newListOfIngredients: newIngredList
       });
-
-      console.log("newListOfIngredients  = " + this.state.newListOfIngredients);
-      console.log("listOfIngredients  = " + this.state.listOfIngredients);
-      // this.state.updateThisRecipe();
     }
   }, {
     key: '_submitNewRecipeInfo',
     value: function _submitNewRecipeInfo() {
-      console.log("newListOfIngredients 2 = " + this.state.newListOfIngredients);
       //remove empty ingredients
       var newIngredList = this.state.newListOfIngredients.filter(function (value) {
         if (value.length > 0) {
           return value;
         }
       });
-      console.log("newIngredList = " + newIngredList);
 
       this.setState({
         recipeName: this.state.newRecipeName,
@@ -111,7 +105,7 @@ var Recipe = function (_Component) {
         showModal: false
       });
 
-      console.log("ingredients 2 = " + this.state.listOfIngredients);
+      this.state.saveCallback(this.state.recipeName, newIngredList, "UPDATE_RECIPE", this.state.newRecipeName);
     }
   }, {
     key: 'deleteThisRecipe',
@@ -163,7 +157,7 @@ var Recipe = function (_Component) {
                 null,
                 _react2.default.createElement(
                   _reactBootstrap.Button,
-                  { id: 'delete', onClick: this.deleteThisRecipe },
+                  { id: 'delete', onClick: this.deleteThisRecipe.bind(this) },
                   'Delete Recipe'
                 ),
                 _react2.default.createElement(
@@ -195,7 +189,7 @@ var Recipe = function (_Component) {
               { className: 'modal-text' },
               'Recipe'
             ),
-            _react2.default.createElement('input', { type: 'text', placeholder: 'Recipe Name', onChange: this._updateRecipeName.bind(this), id: 'name-of-recipe', value: this.state.newRecipeName }),
+            _react2.default.createElement('input', { type: 'text', placeholder: 'Recipe Name', onChange: this._updateRecipeName.bind(this), id: 'name-of-recipe', value: this.state.newRecipeName, required: true }),
             _react2.default.createElement(
               'p',
               { className: 'modal-text' },

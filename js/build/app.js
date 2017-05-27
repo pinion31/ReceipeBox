@@ -45,22 +45,38 @@ var recipeStore = {
         save(newState);
         return newState;
 
-      case "SET_INGRED":
-        newState.map(function (value) {
-
-          if (value.name === action.name) {
-            vaule.ingredients = action.ingredients;
-          }
-          return value;
-        });
-        save(newState);
-        return newState;
-
+      /* case "SET_INGRED":
+         newState.map(function(value) {
+             if (value.name === action.name) {
+             value.ingredients = action.ingredients;
+               return value;
+           }
+           });
+           save(newState);
+         return newState;
+      */
       case "DELETE_RECIPE":
         newState = newState.filter(function (value, k) {
 
           if (value.name != action.name) {
             return value;
+          }
+        });
+        save(newState);
+        return newState;
+      /* case "RENAME_RECIPE":
+         newState.map(function(value){
+           if (value.name === action.name) {
+             value.name = action.newName;
+           }
+           });
+         save(newState);
+         return newState;*/
+      case "UPDATE_RECIPE":
+        newState.map(function (value) {
+          if (value.name === action.name) {
+            value.name = action.newName;
+            value.ingredients = action.ingredients;
           }
         });
         save(newState);
@@ -95,7 +111,6 @@ var recipeStore = {
 
     localStorage.setItem('data', JSON.stringify(state, replacer));
   }
-
 };
 
 var dispatchAction = function dispatchAction() {

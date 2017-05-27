@@ -32,17 +32,19 @@ const recipeStore =  {
         save(newState);
         return newState;
 
-      case "SET_INGRED":
+     /* case "SET_INGRED":
         newState.map(function(value) {
 
-        if (value.name === action.name) {
-          vaule.ingredients = action.ingredients;
-        }
-        return value;
-        });
+          if (value.name === action.name) {
+            value.ingredients = action.ingredients;
+
+            return value;
+          }
+          });
+
         save(newState);
         return newState;
-
+  */
       case "DELETE_RECIPE":
         newState = newState.filter(function(value,k) {
 
@@ -52,6 +54,23 @@ const recipeStore =  {
           });
         save(newState);
         return newState;
+     /* case "RENAME_RECIPE":
+        newState.map(function(value){
+          if (value.name === action.name) {
+            value.name = action.newName;
+          }
+          });
+        save(newState);
+        return newState;*/
+      case "UPDATE_RECIPE":
+         newState.map(function(value){
+          if (value.name === action.name) {
+            value.name = action.newName;
+            value.ingredients = action.ingredients;
+          }
+          });
+          save(newState);
+         return newState;
       default:
          return state;
     }
@@ -83,41 +102,6 @@ const recipeStore =  {
     localStorage.setItem('data', JSON.stringify(state, replacer));
 
   },
-
-
-  //callback from recipeholder to save ingredients to local storage
-  /*
-  saveIngredientsFromRecipe: (state, nameofRecipe,ingredients) => {
-
-    var currentState = Array.from(state);
-
-    currentState.map(function(value) {
-      if (value.name === nameofRecipe) {
-        value.ingredients = ingredients;
-      }
-    });
-
-    var seen = [];
-
-    var replacer = function(key, value) {
-      if (value != null && typeof value == "object") {
-        if (seen.indexOf(value) >= 0) {
-          return;
-        }
-        seen.push(value);
-      }
-      return value;
-    };
-
-    localStorage.setItem('data', JSON.stringify(currentState, replacer));
-  },
-
-*/
-/*
-  dispatchAction: (state={}, action) => {
-    return { recipes: this.handleAction(state.recipes,action)};
-  },*/
-
 }
 
 let dispatchAction = (state=[], action) => {

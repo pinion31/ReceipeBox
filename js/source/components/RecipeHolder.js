@@ -13,7 +13,7 @@ class RecipeHolder extends Component {
     this.state = {
 
       storeData:this.props.store.getlocalStorageState(), //array
-      recipesComponents: this._buildRecipeComponents(this.props.store.getlocalStorageState(),this.props.dispatcher,this.deleteARecipe.bind(this)),
+      recipesComponents: this._buildRecipeComponents(this.props.store.getlocalStorageState(),this.props.dispatcher,this.deleteARecipe.bind(this),this.sendSaveDataUp.bind(this)),
       dispatch: this.props.dispatcher,
       showModal:false,
       nameOfNewRecipe:'',
@@ -41,7 +41,7 @@ class RecipeHolder extends Component {
   //listOfRecipes: this._formatData(),
   //dispatch: this.props.store.dispatchAction,
 //{recipes: [{name:cookie, ingredients:[milk,eggs]},{},]}
-  _buildRecipeComponents(state, dispatchFunc){
+  _buildRecipeComponents(state, dispatchFunc, deleteFunc, saveFunc){
 
     let currentState = Array.from(state);
     let recipes = [];
@@ -49,8 +49,8 @@ class RecipeHolder extends Component {
     if (currentState.length > 0) {
       currentState.map(function(value, key) {
         recipes.push(
-         <Recipe name= {value.name} dispatcher={dispatchFunc}
-          ingredList = {value.ingredients} key={key}>
+         <Recipe name= {value.name} dispatcher={dispatchFunc} saveCallback={saveFunc}
+          ingredList = {value.ingredients} key={key} deleteRecipe={deleteFunc}>
           </Recipe>
         );
       })
@@ -72,7 +72,7 @@ class RecipeHolder extends Component {
 
     //sets new state after adding recipe
     this.setState({
-      recipesComponents: this._buildRecipeComponents(this.state.storeData,this.state.dispatch, this.deleteARecipe.bind(this)),
+      recipesComponents: this._buildRecipeComponents(this.state.storeData,this.state.dispatch, this.deleteARecipe.bind(this), this.sendSaveDataUp.bind(this)),
       showModal:false, //closes modal after adding recipe
     });
 
@@ -92,21 +92,23 @@ class RecipeHolder extends Component {
   renderRecipes() {
 
     this.setState({
-      recipesComponents:this._buildRecipeComponents(this.state.storeData,this.props.dispatcher, this.deleteARecipe.bind(this)),
+      recipesComponents:this._buildRecipeComponents(this.state.storeData,this.props.dispatcher, this.deleteARecipe.bind(this),this.sendSaveDataUp.bind(this)),
     })
 
   }
 
+  sendSaveDataUp(name, ingredients, actionType, newName="") {
+
+  this.state.storeData = this.state.dispatch(this.state.storeData,
+   { type:actionType,
+     name: name,
+     ingredients:ingredients,
+     newName:newName,
+   });
+  }
+
   deleteARecipe(recipeToDelete) {
 
-    /*
-    let currentState = Array.from(this.state.storeData);
-    console.log("deleteARecipe " + recipeToDelete);
-    currentState = currentState.filter(function(value) {
-        if (value.name != recipeToDelete) {
-          return value;
-        }
-    });*/
     let currentState = Array.from(this.state.storeData);
 
     currentState = this.state.dispatch(currentState , {
@@ -116,7 +118,7 @@ class RecipeHolder extends Component {
 
     this.setState ({
       storeData:currentState,
-      recipesComponents: this._buildRecipeComponents(this.state.storeData,this.state.dispatch, this.deleteARecipe.bind(this)),
+      recipesComponents: this._buildRecipeComponents(currentState,this.state.dispatch, this.deleteARecipe.bind(this), this.sendSaveDataUp.bind(this)),
       showModal:false, //closes modal after adding recipe
     })
     //this.renderRecipes().bind(this)();
