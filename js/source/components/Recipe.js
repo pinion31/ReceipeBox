@@ -63,36 +63,50 @@ class Recipe extends Component {
     }
     });
 
-    this.setState({
-      recipeName: this.state.newRecipeName,
-      listOfIngredients: newIngredList,
-      showModal:false,
-    });
+    if (this.state.newRecipeName.length > 0) {
 
-    this.state.saveCallback(this.state.recipeName, newIngredList, "UPDATE_RECIPE",this.state.newRecipeName );
+      this.setState({
+        recipeName: this.state.newRecipeName,
+        listOfIngredients: newIngredList,
+        showModal:false,
+      });
+
+      this.state.saveCallback(this.state.recipeName, newIngredList, "UPDATE_RECIPE",this.state.newRecipeName );
+    }
+    else {
+      alert("Please Enter Recipe Name");
+    }
+
+
   }
 
   deleteThisRecipe() {
     this.state.deleteRecipe(this.state.recipeName);
+    console.log("deleting " + this.state.recipeName);
 
   }
+
+  //use props here instead of this.state like this.props.name because state
+  //is not updated fast enough
+  // localStorage was being updated correctly but not the current DOM
+
 
   render() {
     return (
       <div>
           <Button id="recipe" onClick={() => this.setState({open:!this.state.open})}>
-            <h1>{this.state.recipeName}</h1>
+            <h1>{this.props.name}</h1>
           </Button>
 
-        <Collapse in={this.state.open} id="recipe-content">
+        <Collapse in={this.state.open} className="recipe-content">
           <div>
               <Well id="ingredient-space">
-                <h1 id="ingredient-heading">Ingredients</h1>
+                <h1 className="ingredient-heading">Ingredients</h1>
                 {
 
-                  this.state.listOfIngredients.map(function(ingredient,keyId) {
+                  this.props.ingredList.map(function(ingredient,keyId) {
                   return (
-                    <p id="ingredient" key={keyId}>
+                    <p className="ingredient" key={keyId}>
                     {ingredient}
                     </p>);
                 })
@@ -114,15 +128,15 @@ class Recipe extends Component {
           <Modal.Body>
 
             <p className="modal-text">Recipe</p>
-            <input type="text" placeholder="Recipe Name" onChange={this._updateRecipeName.bind(this)} id="name-of-recipe" value={this.state.newRecipeName} required/>
+            <input type="text" placeholder="Recipe Name" onChange={this._updateRecipeName.bind(this)} className="name-of-recipe" value={this.state.newRecipeName} required/>
             <p className="modal-text">Ingredients</p>
-            <textarea placeholder="Enter ingredients separate by comma" onChange={this._updateIngredList.bind(this)} id="ingredient-text" value={this.state.newListOfIngredients}>
+            <textarea placeholder="Enter ingredients separate by comma" onChange={this._updateIngredList.bind(this)} className="ingredient-text" value={this.state.newListOfIngredients}>
             </textarea>
 
           </Modal.Body>
           <Modal.Footer>
-            <Button id="EditRecipe" className="btn btn-primary" onClick={this._submitNewRecipeInfo.bind(this)}>Edit Recipe</Button>
-            <Button id="CloseRecipeModal" className="btn btn-primary" onClick={this.close.bind(this)}>Close</Button>
+            <Button  className="btn btn-primary" onClick={this._submitNewRecipeInfo.bind(this)}>Edit Recipe</Button>
+            <Button  className="btn btn-primary" onClick={this.close.bind(this)}>Close</Button>
           </Modal.Footer>
         </Modal>
 

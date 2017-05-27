@@ -99,19 +99,31 @@ var Recipe = function (_Component) {
         }
       });
 
-      this.setState({
-        recipeName: this.state.newRecipeName,
-        listOfIngredients: newIngredList,
-        showModal: false
-      });
+      if (this.state.newRecipeName.length > 0) {
 
-      this.state.saveCallback(this.state.recipeName, newIngredList, "UPDATE_RECIPE", this.state.newRecipeName);
+        this.setState({
+          recipeName: this.state.newRecipeName,
+          listOfIngredients: newIngredList,
+          showModal: false
+        });
+
+        this.state.saveCallback(this.state.recipeName, newIngredList, "UPDATE_RECIPE", this.state.newRecipeName);
+      } else {
+        alert("Please Enter Recipe Name");
+      }
     }
   }, {
     key: 'deleteThisRecipe',
     value: function deleteThisRecipe() {
       this.state.deleteRecipe(this.state.recipeName);
+      console.log("deleting " + this.state.recipeName);
     }
+
+    //use props here instead of this.state like this.props.name because state
+    //is not updated fast enough
+    // localStorage was being updated correctly but not the current DOM
+
+
   }, {
     key: 'render',
     value: function render() {
@@ -128,12 +140,12 @@ var Recipe = function (_Component) {
           _react2.default.createElement(
             'h1',
             null,
-            this.state.recipeName
+            this.props.name
           )
         ),
         _react2.default.createElement(
           _reactBootstrap.Collapse,
-          { 'in': this.state.open, id: 'recipe-content' },
+          { 'in': this.state.open, className: 'recipe-content' },
           _react2.default.createElement(
             'div',
             null,
@@ -142,13 +154,13 @@ var Recipe = function (_Component) {
               { id: 'ingredient-space' },
               _react2.default.createElement(
                 'h1',
-                { id: 'ingredient-heading' },
+                { className: 'ingredient-heading' },
                 'Ingredients'
               ),
-              this.state.listOfIngredients.map(function (ingredient, keyId) {
+              this.props.ingredList.map(function (ingredient, keyId) {
                 return _react2.default.createElement(
                   'p',
-                  { id: 'ingredient', key: keyId },
+                  { className: 'ingredient', key: keyId },
                   ingredient
                 );
               }),
@@ -189,25 +201,25 @@ var Recipe = function (_Component) {
               { className: 'modal-text' },
               'Recipe'
             ),
-            _react2.default.createElement('input', { type: 'text', placeholder: 'Recipe Name', onChange: this._updateRecipeName.bind(this), id: 'name-of-recipe', value: this.state.newRecipeName, required: true }),
+            _react2.default.createElement('input', { type: 'text', placeholder: 'Recipe Name', onChange: this._updateRecipeName.bind(this), className: 'name-of-recipe', value: this.state.newRecipeName, required: true }),
             _react2.default.createElement(
               'p',
               { className: 'modal-text' },
               'Ingredients'
             ),
-            _react2.default.createElement('textarea', { placeholder: 'Enter ingredients separate by comma', onChange: this._updateIngredList.bind(this), id: 'ingredient-text', value: this.state.newListOfIngredients })
+            _react2.default.createElement('textarea', { placeholder: 'Enter ingredients separate by comma', onChange: this._updateIngredList.bind(this), className: 'ingredient-text', value: this.state.newListOfIngredients })
           ),
           _react2.default.createElement(
             _reactBootstrap.Modal.Footer,
             null,
             _react2.default.createElement(
               _reactBootstrap.Button,
-              { id: 'EditRecipe', className: 'btn btn-primary', onClick: this._submitNewRecipeInfo.bind(this) },
+              { className: 'btn btn-primary', onClick: this._submitNewRecipeInfo.bind(this) },
               'Edit Recipe'
             ),
             _react2.default.createElement(
               _reactBootstrap.Button,
-              { id: 'CloseRecipeModal', className: 'btn btn-primary', onClick: this.close.bind(this) },
+              { className: 'btn btn-primary', onClick: this.close.bind(this) },
               'Close'
             )
           )

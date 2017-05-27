@@ -11,16 +11,14 @@ class RecipeHolder extends Component {
     super(props);
 
     this.state = {
-
       storeData:this.props.store.getlocalStorageState(), //array
       recipesComponents: this._buildRecipeComponents(this.props.store.getlocalStorageState(),this.props.dispatcher,this.deleteARecipe.bind(this),this.sendSaveDataUp.bind(this)),
       dispatch: this.props.dispatcher,
       showModal:false,
       nameOfNewRecipe:'',
       newRecipeIngredList:[],
+      idCounter:0,
     };
-    //this.renderRecipes().bind(this)();
-    //this.state.recipesComponents = this._buildRecipeComponents(this.props.dispatcher);
   }
 
    close() {
@@ -37,48 +35,50 @@ class RecipeHolder extends Component {
     });
   }
 
-  //storeData:this.props.store.getlocalStorageState(),
-  //listOfRecipes: this._formatData(),
-  //dispatch: this.props.store.dispatchAction,
-//{recipes: [{name:cookie, ingredients:[milk,eggs]},{},]}
+// [{name:cookie, ingredients:[milk,eggs]},{},]
   _buildRecipeComponents(state, dispatchFunc, deleteFunc, saveFunc){
 
     let currentState = Array.from(state);
     let recipes = [];
-
+    this.printRecipes(currentState);
     if (currentState.length > 0) {
       currentState.map(function(value, key) {
+        console.log("pushing " + value.name);
         recipes.push(
+
          <Recipe name= {value.name} dispatcher={dispatchFunc} saveCallback={saveFunc}
           ingredList = {value.ingredients} key={key} deleteRecipe={deleteFunc}>
           </Recipe>
         );
       })
     }
+    /*
+    this.setState ({
+       recipesComponents:recipes,
+    })*/
     return recipes;
   }
 
-  //
-   //nameOfNewRecipe:'',
-   //newRecipeIngredList:[],
-
    _addRecipe(e) {
     e.preventDefault();
-    this.state.storeData = this.state.dispatch(this.state.storeData, {
-      type:"ADD_RECIPE",
-      name:this.state.nameOfNewRecipe,
-      ingredients:this.state.newRecipeIngredList,
-      });
+    if (this.state.nameOfNewRecipe.length > 0) { //only adds if recipe name is not blank
+
+      this.state.storeData = this.state.dispatch(this.state.storeData, {
+        type:"ADD_RECIPE",
+        name:this.state.nameOfNewRecipe,
+        ingredients:this.state.newRecipeIngredList,
+        });
 
     //sets new state after adding recipe
-    this.setState({
-      recipesComponents: this._buildRecipeComponents(this.state.storeData,this.state.dispatch, this.deleteARecipe.bind(this), this.sendSaveDataUp.bind(this)),
-      showModal:false, //closes modal after adding recipe
-    });
 
-    //this.renderRecipes().bind(this)();
-
-
+      this.setState({
+        recipesComponents: this._buildRecipeComponents(this.state.storeData,this.state.dispatch, this.deleteARecipe.bind(this), this.sendSaveDataUp.bind(this)),
+        showModal:false, //closes modal after adding recipe
+      });
+    }
+    else {
+      alert("Please Enter Recipe Name");
+    }
   }
 
 
@@ -107,6 +107,14 @@ class RecipeHolder extends Component {
    });
   }
 
+  printRecipes(state) {
+
+    state.forEach(function(value) {
+      console.log("current contents : " + value.name);
+    })
+  }
+
+
   deleteARecipe(recipeToDelete) {
 
     let currentState = Array.from(this.state.storeData);
@@ -116,13 +124,16 @@ class RecipeHolder extends Component {
       name:recipeToDelete,
       });
 
+    let components = this._buildRecipeComponents(currentState,this.state.dispatch, this.deleteARecipe.bind(this), this.sendSaveDataUp.bind(this));
+    //console.log("this is currentState = " + currentState[0].name);
+   this.printRecipes(currentState);
+    //sets current display
     this.setState ({
       storeData:currentState,
-      recipesComponents: this._buildRecipeComponents(currentState,this.state.dispatch, this.deleteARecipe.bind(this), this.sendSaveDataUp.bind(this)),
+      //recipesComponents: this._buildRecipeComponents(currentState,this.state.dispatch, this.deleteARecipe.bind(this), this.sendSaveDataUp.bind(this)),
+      recipesComponents: components,
       showModal:false, //closes modal after adding recipe
     })
-    //this.renderRecipes().bind(this)();
-
   }
 //add initial ingredients to new recipe
   _updateIngredList(evt) {
@@ -133,9 +144,6 @@ class RecipeHolder extends Component {
     });
   }
 
-
-  //listOfRecipes:this.props.store.getlocalStorageState(),
-  //dispatch: this.props.store.dispatchAction,
   render() {
     return(
       <div >
@@ -155,9 +163,9 @@ class RecipeHolder extends Component {
           </Modal.Header>
           <Modal.Body>
             <p className="modal-text">Recipe</p>
-            <input type="text" placeholder="Recipe Name" id="name-of-recipe" onChange={this._updateRecipeName.bind(this)}/>
+            <input type="text" placeholder="Recipe Name" className="name-of-recipe" onChange={this._updateRecipeName.bind(this)}/>
             <p className="modal-text">Ingredients</p>
-            <textarea placeholder="Enter ingredients separated by commas" id="ingredient-text" onChange={this._updateIngredList.bind(this)}>
+            <textarea placeholder="Enter ingredients separated by commas" className="ingredient-text" onChange={this._updateIngredList.bind(this)}>
             </textarea>
           </Modal.Body>
           <Modal.Footer>

@@ -59,6 +59,8 @@ var recipeStore = {
         newState = newState.filter(function (value, k) {
 
           if (value.name != action.name) {
+            console.log("returning value " + value.name);
+            console.log("returning action" + action.name);
             return value;
           }
         });
