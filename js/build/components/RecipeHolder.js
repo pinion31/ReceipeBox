@@ -20,10 +20,6 @@ var _Recipe2 = _interopRequireDefault(_Recipe);
 
 var _reactBootstrap = require('react-bootstrap');
 
-var _RecipeModal = require('./RecipeModal');
-
-var _RecipeModal2 = _interopRequireDefault(_RecipeModal);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -46,8 +42,7 @@ var RecipeHolder = function (_Component) {
       dispatch: _this.props.dispatcher,
       showModal: false,
       nameOfNewRecipe: '',
-      newRecipeIngredList: [],
-      idCounter: 0
+      newRecipeIngredList: []
     };
     return _this;
   }
@@ -67,28 +62,35 @@ var RecipeHolder = function (_Component) {
         showModal: true
       });
     }
-
-    // [{name:cookie, ingredients:[milk,eggs]},{},]
-
   }, {
     key: '_buildRecipeComponents',
     value: function _buildRecipeComponents(state, dispatchFunc, deleteFunc, saveFunc) {
 
       var currentState = Array.from(state);
       var recipes = [];
-      this.printRecipes(currentState);
+
       if (currentState.length > 0) {
         currentState.map(function (value, key) {
-          console.log("pushing " + value.name);
           recipes.push(_react2.default.createElement(_Recipe2.default, { name: value.name, dispatcher: dispatchFunc, saveCallback: saveFunc,
             ingredList: value.ingredients, key: key, deleteRecipe: deleteFunc }));
         });
       }
-      /*
-      this.setState ({
-         recipesComponents:recipes,
-      })*/
       return recipes;
+    }
+  }, {
+    key: 'checkDuplicates',
+    value: function checkDuplicates(name) {
+      var state = Array.from(this.state.storeData);
+      var noDuplicates = true;
+
+      state.map(function (value) {
+        if (value.name === name) {
+          noDuplicates = false;
+          return false;
+        }
+      });
+
+      return noDuplicates;
     }
   }, {
     key: '_addRecipe',
@@ -97,17 +99,21 @@ var RecipeHolder = function (_Component) {
       if (this.state.nameOfNewRecipe.length > 0) {
         //only adds if recipe name is not blank
 
-        this.state.storeData = this.state.dispatch(this.state.storeData, {
-          type: "ADD_RECIPE",
-          name: this.state.nameOfNewRecipe,
-          ingredients: this.state.newRecipeIngredList
-        });
+        if (this.checkDuplicates(this.state.nameOfNewRecipe)) {
+          this.state.storeData = this.state.dispatch(this.state.storeData, {
+            type: "ADD_RECIPE",
+            name: this.state.nameOfNewRecipe,
+            ingredients: this.state.newRecipeIngredList
+          });
 
-        //sets new state after adding recipe
+          //sets new state after adding recipe
 
-        this.setState({
-          recipesComponents: this._buildRecipeComponents(this.state.storeData, this.state.dispatch, this.deleteARecipe.bind(this), this.sendSaveDataUp.bind(this)),
-          showModal: false });
+          this.setState({
+            recipesComponents: this._buildRecipeComponents(this.state.storeData, this.state.dispatch, this.deleteARecipe.bind(this), this.sendSaveDataUp.bind(this)),
+            showModal: false });
+        } else {
+          alert("That recipe name has already been added. Please choose another name.");
+        }
       } else {
         alert("Please Enter Recipe Name");
       }
@@ -141,6 +147,8 @@ var RecipeHolder = function (_Component) {
         ingredients: ingredients,
         newName: newName
       });
+
+      this.renderRecipes();
     }
   }, {
     key: 'printRecipes',
@@ -162,12 +170,10 @@ var RecipeHolder = function (_Component) {
       });
 
       var components = this._buildRecipeComponents(currentState, this.state.dispatch, this.deleteARecipe.bind(this), this.sendSaveDataUp.bind(this));
-      //console.log("this is currentState = " + currentState[0].name);
-      this.printRecipes(currentState);
+
       //sets current display
       this.setState({
         storeData: currentState,
-        //recipesComponents: this._buildRecipeComponents(currentState,this.state.dispatch, this.deleteARecipe.bind(this), this.sendSaveDataUp.bind(this)),
         recipesComponents: components,
         showModal: false });
     }

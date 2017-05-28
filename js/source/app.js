@@ -31,39 +31,15 @@ const recipeStore =  {
         newState.push({name:action.name,ingredients:newIngredList});
         save(newState);
         return newState;
-
-     /* case "SET_INGRED":
-        newState.map(function(value) {
-
-          if (value.name === action.name) {
-            value.ingredients = action.ingredients;
-
-            return value;
-          }
-          });
-
-        save(newState);
-        return newState;
-  */
       case "DELETE_RECIPE":
         newState = newState.filter(function(value,k) {
 
           if (value.name != action.name) {
-            console.log("returning value " + value.name);
-            console.log("returning action" + action.name);
             return value;
           }
           });
         save(newState);
         return newState;
-     /* case "RENAME_RECIPE":
-        newState.map(function(value){
-          if (value.name === action.name) {
-            value.name = action.newName;
-          }
-          });
-        save(newState);
-        return newState;*/
       case "UPDATE_RECIPE":
          newState.map(function(value){
           if (value.name === action.name) {
@@ -76,16 +52,6 @@ const recipeStore =  {
       default:
          return state;
     }
-  },
-
-  loadFromLocalStorage: () => {
-    let data = JSON.parse(localStorage.getItem('data'));
-
-    if (!data) {
-      data = [];
-    }
-
-    return data;
   },
 
   saveToLocalStorage: (state) => {

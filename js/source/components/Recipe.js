@@ -1,11 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Component, PropTypes} from 'react';
-//import Bootstrap from 'bootstrap';
 import $ from 'jquery';
-//import Bootstrap from 'bootstrap';
 import {Button, Collapse, Well, Modal, closeButton} from 'react-bootstrap';
-import RecipeModal from './RecipeModal';
 
 class Recipe extends Component {
 
@@ -66,24 +63,18 @@ class Recipe extends Component {
     if (this.state.newRecipeName.length > 0) {
 
       this.setState({
-        recipeName: this.state.newRecipeName,
-        listOfIngredients: newIngredList,
-        showModal:false,
-      });
+          showModal:false,
+        });
 
       this.state.saveCallback(this.state.recipeName, newIngredList, "UPDATE_RECIPE",this.state.newRecipeName );
     }
     else {
       alert("Please Enter Recipe Name");
     }
-
-
   }
 
   deleteThisRecipe() {
-    this.state.deleteRecipe(this.state.recipeName);
-    console.log("deleting " + this.state.recipeName);
-
+    this.state.deleteRecipe(this.props.name);
   }
 
   //use props here instead of this.state like this.props.name because state

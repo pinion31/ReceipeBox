@@ -20,10 +20,6 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 var _reactBootstrap = require('react-bootstrap');
 
-var _RecipeModal = require('./RecipeModal');
-
-var _RecipeModal2 = _interopRequireDefault(_RecipeModal);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -31,10 +27,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-//import Bootstrap from 'bootstrap';
-
-//import Bootstrap from 'bootstrap';
-
 
 var Recipe = function (_Component) {
   _inherits(Recipe, _Component);
@@ -102,8 +94,6 @@ var Recipe = function (_Component) {
       if (this.state.newRecipeName.length > 0) {
 
         this.setState({
-          recipeName: this.state.newRecipeName,
-          listOfIngredients: newIngredList,
           showModal: false
         });
 
@@ -115,8 +105,7 @@ var Recipe = function (_Component) {
   }, {
     key: 'deleteThisRecipe',
     value: function deleteThisRecipe() {
-      this.state.deleteRecipe(this.state.recipeName);
-      console.log("deleting " + this.state.recipeName);
+      this.state.deleteRecipe(this.props.name);
     }
 
     //use props here instead of this.state like this.props.name because state

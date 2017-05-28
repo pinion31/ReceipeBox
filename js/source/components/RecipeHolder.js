@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import {Component, PropTypes} from 'react';
 import Recipe from './Recipe';
 import {Button, Collapse, Well, Modal, closeButton } from 'react-bootstrap';
-import RecipeModal from './RecipeModal';
 
 class RecipeHolder extends Component {
 
@@ -17,7 +16,6 @@ class RecipeHolder extends Component {
       showModal:false,
       nameOfNewRecipe:'',
       newRecipeIngredList:[],
-      idCounter:0,
     };
   }
 
@@ -35,15 +33,13 @@ class RecipeHolder extends Component {
     });
   }
 
-// [{name:cookie, ingredients:[milk,eggs]},{},]
   _buildRecipeComponents(state, dispatchFunc, deleteFunc, saveFunc){
 
     let currentState = Array.from(state);
     let recipes = [];
-    this.printRecipes(currentState);
+
     if (currentState.length > 0) {
       currentState.map(function(value, key) {
-        console.log("pushing " + value.name);
         recipes.push(
 
          <Recipe name= {value.name} dispatcher={dispatchFunc} saveCallback={saveFunc}
@@ -52,29 +48,45 @@ class RecipeHolder extends Component {
         );
       })
     }
-    /*
-    this.setState ({
-       recipesComponents:recipes,
-    })*/
     return recipes;
+  }
+
+  checkDuplicates(name) {
+    let state= Array.from(this.state.storeData);
+    let noDuplicates = true;
+
+    state.map((value) => {
+      if (value.name === name) {
+        noDuplicates = false;
+        return false;
+      }
+    })
+
+    return noDuplicates;
+
   }
 
    _addRecipe(e) {
     e.preventDefault();
     if (this.state.nameOfNewRecipe.length > 0) { //only adds if recipe name is not blank
 
-      this.state.storeData = this.state.dispatch(this.state.storeData, {
-        type:"ADD_RECIPE",
-        name:this.state.nameOfNewRecipe,
-        ingredients:this.state.newRecipeIngredList,
+      if (this.checkDuplicates(this.state.nameOfNewRecipe)) {
+        this.state.storeData = this.state.dispatch(this.state.storeData, {
+          type:"ADD_RECIPE",
+          name:this.state.nameOfNewRecipe,
+          ingredients:this.state.newRecipeIngredList,
+          });
+
+      //sets new state after adding recipe
+
+        this.setState({
+          recipesComponents: this._buildRecipeComponents(this.state.storeData,this.state.dispatch, this.deleteARecipe.bind(this), this.sendSaveDataUp.bind(this)),
+          showModal:false, //closes modal after adding recipe
         });
-
-    //sets new state after adding recipe
-
-      this.setState({
-        recipesComponents: this._buildRecipeComponents(this.state.storeData,this.state.dispatch, this.deleteARecipe.bind(this), this.sendSaveDataUp.bind(this)),
-        showModal:false, //closes modal after adding recipe
-      });
+      }
+      else {
+        alert("That recipe name has already been added. Please choose another name.");
+      }
     }
     else {
       alert("Please Enter Recipe Name");
@@ -105,6 +117,8 @@ class RecipeHolder extends Component {
      ingredients:ingredients,
      newName:newName,
    });
+
+  this.renderRecipes();
   }
 
   printRecipes(state) {
@@ -113,7 +127,6 @@ class RecipeHolder extends Component {
       console.log("current contents : " + value.name);
     })
   }
-
 
   deleteARecipe(recipeToDelete) {
 
@@ -125,12 +138,10 @@ class RecipeHolder extends Component {
       });
 
     let components = this._buildRecipeComponents(currentState,this.state.dispatch, this.deleteARecipe.bind(this), this.sendSaveDataUp.bind(this));
-    //console.log("this is currentState = " + currentState[0].name);
-   this.printRecipes(currentState);
+
     //sets current display
     this.setState ({
       storeData:currentState,
-      //recipesComponents: this._buildRecipeComponents(currentState,this.state.dispatch, this.deleteARecipe.bind(this), this.sendSaveDataUp.bind(this)),
       recipesComponents: components,
       showModal:false, //closes modal after adding recipe
     })
